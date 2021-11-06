@@ -1,0 +1,107 @@
+import { Markup } from 'telegraf'
+import { TelegrafContext } from 'telegraf/typings/context'
+import DisplayController from './display-controller'
+import RelationsService from '../services/relations-service'
+import ProfileService from '../services/profile-service'
+const Extra = require('telegraf/extra')
+
+class SwiperController {
+  constructor() {
+    this.sendLike = this.sendLike.bind(this)
+  }
+
+  async enter(ctx: TelegrafContext) {
+    const isOver = await DisplayController.showCandidates(ctx)
+
+    if (ctx.scene.state.is_first) {
+      ctx.scene.state.is_first = false
+    }
+
+    if (isOver) {
+      await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+
+      ctx.scene.enter('swiper_nav')
+    }
+  }
+
+  choose = async (ctx: TelegrafContext) => {
+    const { from, session, callbackQuery } = ctx
+    const { candidates } = session
+
+    if (candidates) {
+      const { chat_id } = candidates[0]
+
+      let like: boolean = callbackQuery?.data === 'yes'
+
+      await RelationsService.newRelation(from!.id, chat_id, like)
+
+      if (like) {
+        this.sendLike(ctx, chat_id)
+      }
+
+      if (candidates.length) {
+        candidates.shift()
+      }
+
+      if (candidates.length) {
+        session.relations = session.relations || []
+
+        await DisplayController.showCandidates(ctx)
+      } else {
+        await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+
+        ctx.scene.enter('swiper_nav')
+      }
+    }
+  }
+
+  async report(ctx: TelegrafContext) {
+    if (ctx.session.candidates) {
+      const { chat_id, strikes } = ctx.session.candidates[0]
+
+      ProfileService.reportProfile(chat_id, strikes).catch((e) =>
+        console.log(e)
+      )
+
+      RelationsService.newRelation(ctx.from!.id, chat_id, false).catch((e) => {
+        console.log(e)
+      })
+
+      await ctx.session.candidates.shift()
+
+      await DisplayController.showCandidates(ctx)
+    }
+  }
+
+  async sendLike({ telegram, i18n }: TelegrafContext, chat_id: number) {
+    const likes = await ProfileService.updateUserLikes(chat_id)
+
+    if (likes && likes % 3 === 0) {
+      try {
+        await telegram.sendMessage(
+          chat_id,
+          `${i18n.t('likely.alert1')} <b>${likes} ${i18n.t(
+            'likely.alert2'
+          )}</b>\n\n${i18n.t('likely.alert3')}`,
+          Extra.HTML().markup((m: Markup<any>) =>
+            m.inlineKeyboard([
+              m.callbackButton(i18n.t('likely.alertbtn'), 'rndmsht'),
+            ])
+          )
+        )
+      } catch (e: any) {
+        if (e.response && e.response.error_code === 403) {
+          ProfileService.deleteProfile(chat_id)
+        } else {
+          throw new Error(`Unexpected error with like sending`)
+        }
+      }
+    }
+  }
+
+  toNavigation({ scene }: TelegrafContext) {
+    scene.enter('swiper_nav')
+  }
+}
+
+export default new SwiperController()
