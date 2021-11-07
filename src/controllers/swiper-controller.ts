@@ -11,13 +11,22 @@ class SwiperController {
   }
 
   async enter(ctx: TelegrafContext) {
-    const isOver = await DisplayController.showCandidates(ctx)
+    if (ctx.session.candidates) {
+      const isOver = await DisplayController.showCandidates(
+        ctx,
+        ctx.session.candidates[0]
+      )
 
-    if (ctx.scene.state.is_first) {
-      ctx.scene.state.is_first = false
-    }
+      if (ctx.scene.state.is_first) {
+        ctx.scene.state.is_first = false
+      }
 
-    if (isOver) {
+      if (isOver) {
+        await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+
+        ctx.scene.enter('swiper_nav')
+      }
+    } else {
       await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
 
       ctx.scene.enter('swiper_nav')
@@ -46,7 +55,7 @@ class SwiperController {
       if (candidates.length) {
         session.relations = session.relations || []
 
-        await DisplayController.showCandidates(ctx)
+        await DisplayController.showCandidates(ctx, candidates[0])
       } else {
         await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
 
@@ -67,9 +76,9 @@ class SwiperController {
         console.log(e)
       })
 
-      await ctx.session.candidates.shift()
+      ctx.session.candidates.shift()
 
-      await DisplayController.showCandidates(ctx)
+      DisplayController.showCandidates(ctx, ctx.session.candidates[0])
     }
   }
 

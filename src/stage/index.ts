@@ -19,6 +19,7 @@ export default (bot: any) => {
 
   const ActionMain = require('./scenes/Swiper/Main')()
   const ActionMenu = require('./scenes/Swiper/Menu')()
+  const LikelyMain = require('./scenes/Likely/Display')()
 
   const stage = new Stage(
     [
@@ -36,6 +37,7 @@ export default (bot: any) => {
       EditDescScene,
       ActionMain,
       ActionMenu,
+      LikelyMain,
     ],
     {
       ttl: 120,

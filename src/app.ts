@@ -15,6 +15,10 @@ export default () => {
 
   const bot: any = new Telegraf(process.env.BOT_TOKEN as string)
 
+  bot.catch((error: Error) => {
+    console.log(error)
+  })
+
   const i18n = new I18n({
     directory: path.resolve(__dirname, 'locales'),
     defaultLanguage: 'ua',
@@ -44,10 +48,6 @@ export default () => {
   sceneInitialisation(bot)
 
   bot.use(updateMiddleware)
-
-  bot.catch((error: Error) => {
-    console.log(error)
-  })
 
   db.connection.once('open', async () => {
     console.log('Connected to MongoDB')

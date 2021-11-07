@@ -12,7 +12,7 @@ class DisplayController {
     this.controlKeyboard = this.controlKeyboard
   }
 
-  async showCandidates(ctx: TelegrafContext) {
+  async showCandidates(ctx: TelegrafContext, profile: IProfile) {
     const { scene, session, replyWithPhoto, replyWithVideo } = ctx
 
     let { is_first, likes } = scene.state
@@ -23,8 +23,6 @@ class DisplayController {
     if (!likes && candidates.length < 10 && citiesCache.length) {
       this.getCandidates(session)
     }
-
-    const profile: IProfile = candidates[0]
 
     if (profile && is_first) {
       profile.avatar.is_video
