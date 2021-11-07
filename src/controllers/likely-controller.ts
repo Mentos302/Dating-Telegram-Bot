@@ -3,60 +3,66 @@ import DisplayController from './display-controller'
 import RelationsService from '../services/relations-service'
 import IProfile from '../interfaces/IProfile'
 import ProfileService from '../services/profile-service'
+import { Markup } from 'telegraf'
 const Extra = require('telegraf/extra')
 
 class LikelyContoroller {
   constructor() {
-    this.matchHandler = this.matchHandler
+    this.matchHandler = this.matchHandler.bind(this)
   }
 
   async enter(ctx: TelegrafContext) {
-    ctx.session.candidates = []
+    const { scene, session } = ctx
 
-    for (const candidat of ctx.scene.state.likes) {
-      const profile = await ProfileService.getProfile(candidat)
+    session.likely_candidates = []
 
-      ctx.session.candidates.push(profile)
+    for (const like of scene.state.likes) {
+      const profile: IProfile = await ProfileService.getProfile(like.host_id)
+
+      session.likely_candidates.push(profile)
     }
 
-    const isOver = await DisplayController.showCandidates(ctx)
-
-    if (isOver) ctx.scene.enter('swiper_main')
+    if (session.likely_candidates)
+      DisplayController.showCandidates(ctx, session.likely_candidates[0])
   }
 
-  async choose(ctx: TelegrafContext) {
+  choose = async (ctx: TelegrafContext) => {
     const { from, session, callbackQuery } = ctx
 
-    if (session.candidates) {
-      const { chat_id } = session.candidates[0]
+    if (session.likely_candidates) {
+      const { chat_id } = session.likely_candidates[0]
 
       let like: boolean = callbackQuery?.data === 'yes'
 
       RelationsService.updateLikely(from!.id, chat_id)
 
+      session.relations.push(chat_id)
+
       if (like) {
-        this.matchHandler(ctx, session.candidates[0])
+        await this.matchHandler(ctx, session.likely_candidates[0])
+      } else {
+        session.likely_candidates.shift()
+
+        if (session.likely_candidates.length) {
+          DisplayController.showCandidates(ctx, session.likely_candidates[0])
+        } else {
+          ctx.scene.enter('swiper_main')
+        }
       }
     }
-
-    session.relations = session.relations || []
-
-    if (session.candidates?.length) await session.candidates.shift()
-
-    await DisplayController.showCandidates(ctx)
   }
 
   async report(ctx: TelegrafContext) {
-    if (ctx.session.candidates) {
-      const { chat_id, strikes } = ctx.session.candidates[0]
+    if (ctx.session.likely_candidates) {
+      const { chat_id, strikes } = ctx.session.likely_candidates[0]
 
       ProfileService.reportProfile(chat_id, strikes)
 
-      RelationsService.newRelation(ctx.from!.id, chat_id, false)
+      // RelationsService.updateLikely(from!.id, chat_id)
 
-      await ctx.session.candidates.shift()
+      ctx.session.likely_candidates.shift()
 
-      DisplayController.showCandidates(ctx)
+      DisplayController.showCandidates(ctx, ctx.session.likely_candidates[0])
     }
   }
 
@@ -66,7 +72,12 @@ class LikelyContoroller {
     replyWithHTML(
       `${i18n.t('likely.climatch')} <a href="tg://user?id=${liked.chat_id}">${
         liked.name
-      }</a>`
+      }</a>`,
+      Extra.markup((m: Markup<any>) =>
+        m.inlineKeyboard([
+          [m.callbackButton(i18n.t('likely.continue'), 'continue')],
+        ])
+      )
     )
 
     if (from) {
@@ -76,7 +87,11 @@ class LikelyContoroller {
           `${i18n.t('likely.hostmatch')} <a href="tg://user?id=${from.id}">${
             from.first_name
           }</a>`,
-          Extra.HTML()
+          Extra.HTML().markup((m: Markup<any>) =>
+            m.inlineKeyboard([
+              [m.callbackButton(i18n.t('likely.continue'), 'continue')],
+            ])
+          )
         )
       } catch (e: any) {
         if (e.response && e.response.error_code === 403) {
@@ -87,6 +102,17 @@ class LikelyContoroller {
           throw new Error('Unexpected error with match handler')
         }
       }
+    }
+  }
+
+  continue(ctx: TelegrafContext) {
+    const candidates = ctx.session.likely_candidates
+    candidates?.shift()
+
+    if (candidates?.length) {
+      DisplayController.showCandidates(ctx, candidates[0])
+    } else {
+      ctx.scene.enter('swiper_main')
     }
   }
 

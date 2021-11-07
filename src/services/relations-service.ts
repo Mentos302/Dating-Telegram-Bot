@@ -56,6 +56,12 @@ class RelationsService {
             { host_id: 1, _id: 0 }
           )
         )
+        .concat(
+          await Relation.find(
+            { cli_id, host_like: true, cli_checked: false },
+            { host_id: 1, _id: 0 }
+          )
+        )
 
       relations = relations.map((e: any) =>
         e.host_id == undefined ? (e = e.cli_id) : (e = e.host_id)

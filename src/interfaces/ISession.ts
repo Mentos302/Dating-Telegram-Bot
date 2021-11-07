@@ -6,6 +6,7 @@ interface ISession {
   citiesCache: string[]
   relations: number[]
   candidates?: IProfile[]
+  likely_candidates?: IProfile[]
 }
 
 export default ISession
