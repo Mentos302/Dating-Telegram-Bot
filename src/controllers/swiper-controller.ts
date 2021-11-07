@@ -3,6 +3,7 @@ import { TelegrafContext } from 'telegraf/typings/context'
 import DisplayController from './display-controller'
 import RelationsService from '../services/relations-service'
 import ProfileService from '../services/profile-service'
+import UserService from '../services/user-service'
 const Extra = require('telegraf/extra')
 
 class SwiperController {
@@ -37,29 +38,48 @@ class SwiperController {
     const { from, session, callbackQuery } = ctx
     const { candidates } = session
 
-    if (candidates) {
+    if (candidates && session.daily_likes) {
+      let currentLikes = session.daily_likes
       const { chat_id } = candidates[0]
 
       let like: boolean = callbackQuery?.data === 'yes'
 
-      await RelationsService.newRelation(from!.id, chat_id, like)
-
-      if (like) {
-        this.sendLike(ctx, chat_id)
-      }
-
-      if (candidates.length) {
-        candidates.shift()
-      }
-
-      if (candidates.length) {
-        session.relations = session.relations || []
-
-        await DisplayController.showCandidates(ctx, candidates[0])
+      if (currentLikes >= 15) {
+        await ctx.reply(
+          ctx.i18n.t('action.limit'),
+          Extra.HTML().markup((m: Markup<any>) =>
+            m.inlineKeyboard([
+              [m.callbackButton('📋 Запросити друзів', 'toRefferal')],
+              [m.callbackButton('↩️ Повернутись в меню', 'go_exit')],
+            ])
+          )
+        )
       } else {
-        await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+        if (like && currentLikes) {
+          currentLikes++
 
-        ctx.scene.enter('swiper_nav')
+          if (!(currentLikes % 5) && ctx.from) {
+            UserService.updateDailyLikes(ctx.from?.id, currentLikes)
+          }
+
+          this.sendLike(ctx, chat_id)
+        }
+
+        await RelationsService.newRelation(from!.id, chat_id, like)
+
+        if (candidates.length) {
+          candidates.shift()
+        }
+
+        if (candidates.length) {
+          session.relations = session.relations || []
+
+          await DisplayController.showCandidates(ctx, candidates[0])
+        } else {
+          await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+
+          ctx.scene.enter('swiper_nav')
+        }
       }
     }
   }
@@ -108,8 +128,12 @@ class SwiperController {
     }
   }
 
-  toNavigation({ scene }: TelegrafContext) {
-    scene.enter('swiper_nav')
+  toRefferal(ctx: TelegrafContext) {
+    ctx.scene.enter('refferal')
+  }
+
+  toNavigation(ctx: TelegrafContext) {
+    ctx.scene.enter('swiper_nav')
   }
 }
 

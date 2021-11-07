@@ -21,6 +21,8 @@ export default (bot: any) => {
   const ActionMenu = require('./scenes/Swiper/Menu')()
   const LikelyMain = require('./scenes/Likely/Display')()
 
+  const Refferal = require('./scenes/Profile/Refferal')()
+
   const stage = new Stage(
     [
       GreetingScene,
@@ -38,6 +40,7 @@ export default (bot: any) => {
       ActionMain,
       ActionMenu,
       LikelyMain,
+      Refferal,
     ],
     {
       ttl: 120,

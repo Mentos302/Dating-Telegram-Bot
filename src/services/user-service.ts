@@ -36,7 +36,7 @@ class Service {
     try {
       await User.updateOne(
         { chat_id },
-        { last_activity: moment().format('DD.MM.YYYY') }
+        { last_activity: Math.floor(Date.now() / 1000) }
       )
     } catch (e) {
       console.log(e)
@@ -55,6 +55,38 @@ class Service {
       console.log(e)
 
       throw new Error(`Unexprected error with user removing`)
+    }
+  }
+
+  async updateDailyLikes(chat_id: number, daily_likes: number) {
+    try {
+      await User.updateOne({ chat_id }, { daily_likes })
+    } catch (e) {
+      console.log(e)
+
+      throw new Error(`Unexprected error with likes updating`)
+    }
+  }
+
+  async getUserRefBonus(chat_id: number) {
+    try {
+      const refBonus = await User.findOne({ chat_id }, { refbonus: 1, _id: 0 })
+
+      return refBonus.refbonus
+    } catch (e) {
+      console.log(e)
+
+      throw new Error(`Unexprected error with ref bonus getting`)
+    }
+  }
+
+  async updateUserRefBonus(chat_id: string) {
+    try {
+      await User.updateOne({ chat_id }, { $inc: { refbonus: 1 } })
+    } catch (e) {
+      console.log(e)
+
+      throw new Error(`Unexprected error with ref bonus increasing`)
     }
   }
 }

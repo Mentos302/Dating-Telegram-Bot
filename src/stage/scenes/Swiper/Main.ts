@@ -14,6 +14,8 @@ module.exports = () => {
 
   scene.action('go_exit', controller.toNavigation)
 
+  scene.action('toRefferal', controller.toRefferal)
+
   scene.on('message', controller.toNavigation)
 
   return scene
