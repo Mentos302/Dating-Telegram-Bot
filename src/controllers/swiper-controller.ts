@@ -38,13 +38,12 @@ class SwiperController {
     const { from, session, callbackQuery } = ctx
     const { candidates } = session
 
-    if (candidates && session.daily_likes) {
-      let currentLikes = session.daily_likes
+    if (candidates) {
       const { chat_id } = candidates[0]
 
       let like: boolean = callbackQuery?.data === 'yes'
 
-      if (currentLikes >= 15) {
+      if (like && session.daily_likes! >= 15) {
         await ctx.reply(
           ctx.i18n.t('action.limit'),
           Extra.HTML().markup((m: Markup<any>) =>
@@ -55,11 +54,11 @@ class SwiperController {
           )
         )
       } else {
-        if (like && currentLikes) {
-          currentLikes++
+        if (like) {
+          session.daily_likes!++
 
-          if (!(currentLikes % 5) && ctx.from) {
-            UserService.updateDailyLikes(ctx.from?.id, currentLikes)
+          if (!(session.daily_likes! % 5) && ctx.from) {
+            UserService.updateDailyLikes(ctx.from?.id, session.daily_likes!)
           }
 
           this.sendLike(ctx, chat_id)
@@ -74,7 +73,7 @@ class SwiperController {
         if (candidates.length) {
           session.relations = session.relations || []
 
-          await DisplayController.showCandidates(ctx, candidates[0])
+          DisplayController.showCandidates(ctx, candidates[0])
         } else {
           await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
 

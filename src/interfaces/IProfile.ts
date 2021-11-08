@@ -8,7 +8,7 @@ interface IProfile {
   city: string
   name: string
   avatar: IAvatar
-  decsript: string
+  descript: string
   attraction: number
   strikes: number
 }

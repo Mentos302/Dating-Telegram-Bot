@@ -19,7 +19,7 @@ class ProfileService {
 
   async createProfile(data: IProfile) {
     try {
-      const { chat_id, age, gender, interest, city, name, avatar, decsript } =
+      const { chat_id, age, gender, interest, city, name, avatar, descript } =
         data
 
       await Profile.create({
@@ -29,7 +29,7 @@ class ProfileService {
         interest,
         city,
         age,
-        decsript,
+        descript,
         avatar,
       })
 

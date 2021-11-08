@@ -123,13 +123,13 @@ class RegController {
   }
 
   resDescSkip({ scene }: TelegrafContext) {
-    scene.enter('reg8', { ...scene.state, decsript: `` })
+    scene.enter('reg8', { ...scene.state, descript: `` })
   }
 
   resDesc({ message, scene }: TelegrafContext) {
     let linkFilter = message?.text.replace(/\./g, ' ').replace(/@/g, ' ')
 
-    scene.enter('reg8', { ...scene.state, decsript: linkFilter })
+    scene.enter('reg8', { ...scene.state, descript: linkFilter })
   }
 
   reqAvatar({ replyWithHTML, i18n }: TelegrafContext) {
@@ -162,7 +162,7 @@ class RegController {
     replyWithHTML,
     i18n,
   }: TelegrafContext) {
-    const { name, age, city, decsript, avatar } = scene.state
+    const { name, age, city, descript, avatar } = scene.state
 
     if (avatar.is_video) {
       await replyWithVideo(
@@ -170,7 +170,7 @@ class RegController {
         Extra.markup((m: Markup<any>) => {
           m.resize()
         })
-          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${decsript}`)
+          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
           .HTML()
       )
     } else {
@@ -179,7 +179,7 @@ class RegController {
         Extra.markup((m: Markup<any>) => {
           m.resize()
         })
-          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${decsript}`)
+          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
           .HTML()
       )
     }

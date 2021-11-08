@@ -26,7 +26,7 @@ const profileScheme = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    decsript: {
+    descript: {
       type: String,
     },
     avatar: {

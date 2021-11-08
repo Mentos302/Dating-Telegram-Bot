@@ -15,10 +15,6 @@ export default () => {
 
   const bot: any = new Telegraf(process.env.BOT_TOKEN as string)
 
-  bot.catch((error: Error) => {
-    console.log(error)
-  })
-
   const i18n = new I18n({
     directory: path.resolve(__dirname, 'locales'),
     defaultLanguage: 'ua',
@@ -28,6 +24,10 @@ export default () => {
   bot.use(i18n.middleware())
 
   bot.context.i18n = i18n
+
+  bot.catch((error: Error) => {
+    console.log(error)
+  })
 
   bot.use(
     rateLimit({

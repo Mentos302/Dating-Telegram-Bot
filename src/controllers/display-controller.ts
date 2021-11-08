@@ -20,7 +20,7 @@ class DisplayController {
     const candidates = session.candidates || []
     const citiesCache = session.citiesCache || []
 
-    if (!likes && candidates.length < 10 && citiesCache.length) {
+    if (!likes && candidates.length < 10) {
       this.getCandidates(session)
     }
 
@@ -49,7 +49,7 @@ class DisplayController {
     if (searching) {
       let { candidates, citiesCache } = searching
 
-      if (!citiesCache) citiesCache = []
+      if (!citiesCache.length) citiesCache = []
 
       session.city = citiesCache[0]
       session.candidates = session.candidates
@@ -68,12 +68,12 @@ class DisplayController {
   }
 
   controlKeyboard({ i18n }: TelegrafContext, profile: IProfile) {
-    const { name, age, city, decsript } = profile
+    const { name, age, city, descript } = profile
 
     return Extra.markup((m: Markup<any>) => {
       m.resize()
     })
-      .caption(`<b>${name}, ${age}</b>. ${city} \n\n${decsript}`)
+      .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
       .HTML()
       .markup((m: Markup<any>) =>
         m.inlineKeyboard([
@@ -93,16 +93,16 @@ class DisplayController {
     { i18n, editMessageMedia, editMessageCaption }: TelegrafContext,
     profile: IProfile
   ) {
-    const { name, age, city, decsript, avatar } = profile
+    const { name, age, city, descript, avatar } = profile
 
     const media = avatar.file_id
 
-    editMessageMedia(
+    await editMessageMedia(
       avatar.is_video ? { type: 'video', media } : { type: 'photo', media }
     )
 
     editMessageCaption(
-      `<b>${name}, ${age}</b>. ${city} \n\n${decsript}`,
+      `<b>${name}, ${age}</b>. ${city} \n\n${descript}`,
       Extra.markup((m: Markup<any>) => {
         m.resize()
       })
