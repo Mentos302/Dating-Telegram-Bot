@@ -7,13 +7,9 @@ module.exports = () => {
 
   scene.enter(controller.reqSex)
 
-  scene.action('boys', controller.resSexMale)
+  scene.on('callback_query', controller.resSex)
 
-  scene.action('girls', controller.resSexFemale)
-
-  scene.action('both', controller.resSexBoth)
-
-  scene.on('message', (ctx: TelegrafContext) => ctx.scene.reenter('reg4'))
+  scene.on('message', controller.resCandidateAge)
 
   return scene
 }

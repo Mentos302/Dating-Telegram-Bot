@@ -65,33 +65,49 @@ class RegController {
     )
   }
 
-  resSexMale({ scene }: TelegrafContext) {
-    scene.enter('reg5', { ...scene.state, interest: 1 })
+  resSex(ctx: TelegrafContext) {
+    let sex
+
+    switch (ctx.callbackQuery!.data) {
+      case 'girls':
+        sex = 0
+        break
+      case 'boys':
+        sex = 1
+        break
+      case 'both':
+        sex = 2
+        break
+    }
+
+    ctx.scene.state.interest = sex
+
+    ctx.reply(ctx.i18n.t('reg.candidateage'), Extra.HTML())
   }
 
-  resSexFemale({ scene }: TelegrafContext) {
-    scene.enter('reg5', { ...scene.state, interest: 0 })
+  resCandidateAge(ctx: TelegrafContext) {
+    const candidateAge = ctx.message?.text
+
+    candidateAge && !isNaN(parseInt(candidateAge))
+      ? ctx.scene.enter('reg5', { ...ctx.scene.state, candidateAge })
+      : ctx.reply(ctx.i18n.t('reg.age_error'), Extra.HTLM())
   }
 
-  resSexBoth({ scene }: TelegrafContext) {
-    scene.enter('reg5', { ...scene.state, interest: 2 })
+  reqCity(ctx: TelegrafContext) {
+    ctx.replyWithHTML(ctx.i18n.t('reg.city'))
   }
 
-  reqCity({ replyWithHTML, i18n }: TelegrafContext) {
-    replyWithHTML(i18n.t('reg.city'))
-  }
+  async resCity(ctx: TelegrafContext) {
+    ctx.scene.enter('reg6', { ...ctx.scene.state, city: ctx.message?.text })
 
-  async resCity({ message, scene, session }: TelegrafContext) {
-    scene.enter('reg6', { ...scene.state, city: message?.text })
-
-    session = {
-      profile: { ...scene.state, city: message?.text },
-      city: message?.text,
+    ctx.session = {
+      profile: { ...ctx.scene.state, city: ctx.message?.text },
+      city: ctx.message?.text,
       citiesCache: [],
       relations: [],
     }
 
-    DisplayController.getCandidates(session).catch((e) => console.log(e))
+    DisplayController.getCandidates(ctx.session).catch((e) => console.log(e))
   }
 
   reqName({ replyWithHTML, i18n }: TelegrafContext) {
@@ -194,7 +210,9 @@ class RegController {
     )
   }
 
-  async resConfirm({ from, scene, session, callbackQuery }: TelegrafContext) {
+  async resConfirm(ctx: TelegrafContext) {
+    const { from, scene, session, callbackQuery } = ctx
+
     const userProfile = {
       ...scene.state,
       chat_id: from?.id,

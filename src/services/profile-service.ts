@@ -19,8 +19,17 @@ class ProfileService {
 
   async createProfile(data: IProfile) {
     try {
-      const { chat_id, age, gender, interest, city, name, avatar, descript } =
-        data
+      const {
+        chat_id,
+        age,
+        gender,
+        interest,
+        city,
+        name,
+        avatar,
+        descript,
+        candidateAge,
+      } = data
 
       await Profile.create({
         name,
@@ -31,6 +40,7 @@ class ProfileService {
         age,
         descript,
         avatar,
+        candidateAge,
       })
 
       await City.updateOne({ city_name: city }, { $inc: { profiles: 1 } })
