@@ -22,7 +22,7 @@ class RefferalController {
           [
             m.urlButton(
               'Відправити посилання 🥳',
-              `https://t.me/share/url?url=t.me/ukrdatingbot?friend=${
+              `https://t.me/share/url?url=t.me/ukrdatingbot?start=${
                 ctx.from!.id
               }`
             ),

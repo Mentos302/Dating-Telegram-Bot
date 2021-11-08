@@ -34,7 +34,7 @@ class LikelyContoroller {
 
       let like: boolean = callbackQuery?.data === 'yes'
 
-      RelationsService.updateLikely(from!.id, chat_id)
+      await RelationsService.updateLikely(chat_id, from!.id)
 
       session.relations.push(chat_id)
 
@@ -46,7 +46,7 @@ class LikelyContoroller {
         if (session.likely_candidates.length) {
           DisplayController.showCandidates(ctx, session.likely_candidates[0])
         } else {
-          ctx.scene.enter('swiper_main')
+          ctx.scene.enter('swiper_nav')
         }
       }
     }
@@ -58,7 +58,7 @@ class LikelyContoroller {
 
       ProfileService.reportProfile(chat_id, strikes)
 
-      // RelationsService.updateLikely(from!.id, chat_id)
+      RelationsService.updateLikely(ctx.from!.id, chat_id)
 
       ctx.session.likely_candidates.shift()
 

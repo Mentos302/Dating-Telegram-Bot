@@ -30,6 +30,8 @@ class SwiperController {
       ctx.reply(ctx.i18n.t('action.delay'), Extra.HTML())
       setTimeout(async () => {
         if (ctx.session.candidates?.length) {
+          ctx.scene.state.is_first = true
+
           ctx.scene.reenter()
         } else {
           await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
