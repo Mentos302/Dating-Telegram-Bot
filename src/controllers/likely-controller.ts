@@ -109,15 +109,17 @@ class LikelyContoroller {
     const candidates = ctx.session.likely_candidates
     candidates?.shift()
 
+    ctx.scene.state.is_first = true
+
     if (candidates?.length) {
       DisplayController.showCandidates(ctx, candidates[0])
     } else {
-      ctx.scene.enter('swiper_main')
+      ctx.scene.enter('swiper_main', ctx.scene.state)
     }
   }
 
   toNavigation(ctx: TelegrafContext) {
-    ctx.scene.enter('action_menu')
+    ctx.scene.enter('swiper_menu')
   }
 }
 

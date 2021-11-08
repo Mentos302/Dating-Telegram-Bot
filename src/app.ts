@@ -11,51 +11,51 @@ const rateLimit = require('telegraf-ratelimit')
 const session = require('telegraf/session')
 
 export default () => {
-  const app = express()
+  try {
+    const app = express()
 
-  const bot: any = new Telegraf(process.env.BOT_TOKEN as string)
+    const bot: any = new Telegraf(process.env.BOT_TOKEN as string)
 
-  const i18n = new I18n({
-    directory: path.resolve(__dirname, 'locales'),
-    defaultLanguage: 'ua',
-    defaultLanguageOnMissing: true,
-  })
-
-  bot.use(i18n.middleware())
-
-  bot.context.i18n = i18n
-
-  bot.catch((error: Error) => {
-    console.log(error)
-  })
-
-  bot.use(
-    rateLimit({
-      window: 1000,
-      limit: 1,
-      onLimitExceeded: (ctx: TelegrafContext) =>
-        ctx.reply('Спокійніше, бо я не встигаю 😤'),
+    const i18n = new I18n({
+      directory: path.resolve(__dirname, 'locales'),
+      defaultLanguage: 'ua',
+      defaultLanguageOnMissing: true,
     })
-  )
-  bot.use(
-    session({
-      getSessionKey: (ctx: TelegrafContext) =>
-        ctx.from &&
-        `${ctx.from.id}:${(ctx.chat && ctx.chat.id) || ctx.from.id}`,
+
+    bot.use(i18n.middleware())
+
+    bot.context.i18n = i18n
+
+    bot.use(
+      rateLimit({
+        window: 1000,
+        limit: 1,
+        onLimitExceeded: (ctx: TelegrafContext) =>
+          ctx.reply('Спокійніше, бо я не встигаю 😤'),
+      })
+    )
+    bot.use(
+      session({
+        getSessionKey: (ctx: TelegrafContext) =>
+          ctx.from &&
+          `${ctx.from.id}:${(ctx.chat && ctx.chat.id) || ctx.from.id}`,
+      })
+    )
+
+    sceneInitialisation(bot)
+
+    bot.use(updateMiddleware)
+
+    db.connection.once('open', async () => {
+      console.log('Connected to MongoDB')
+      app.use(bot.webhookCallback('/secreting'))
+      bot.telegram.setWebhook(`${await ngrok.connect(8443)}/secreting`)
+
+      app.listen(8443, () => {
+        console.log('Bot has been started ...')
+      })
     })
-  )
-
-  sceneInitialisation(bot)
-
-  bot.use(updateMiddleware)
-
-  db.connection.once('open', async () => {
-    console.log('Connected to MongoDB')
-    app.use(bot.webhookCallback('/secreting'))
-    bot.telegram.setWebhook(`${await ngrok.connect(8443)}/secreting`)
-
-    app.listen(8443, () => {
-      console.log('Bot has been started ...')
-    })
-  })
+  } catch (e) {
+    console.log(e)
+  }
 }
