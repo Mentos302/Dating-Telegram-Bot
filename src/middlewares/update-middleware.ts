@@ -7,7 +7,7 @@ import IUser from '../interfaces/IUser'
 import DisplayController from '../controllers/display-controller'
 
 export default async (ctx: TelegrafContext) => {
-  if (ctx.updateType === 'message') {
+  if (ctx.updateType === 'message' || 'callbackQuery') {
     const user: IUser = await UserService.getUser(ctx.from!.id)
 
     if (user) {
