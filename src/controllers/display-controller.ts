@@ -61,7 +61,7 @@ class DisplayController {
         session.relations.push(e.chat_id)
       })
 
-      if (citiesCache.length && session.candidates.length < 10) {
+      if (session.candidates.length < 10) {
         this.getCandidates(session).catch((e: Error) => console.log(e))
       }
     }

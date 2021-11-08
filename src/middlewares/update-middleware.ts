@@ -7,7 +7,7 @@ import IUser from '../interfaces/IUser'
 import DisplayController from '../controllers/display-controller'
 
 export default async (ctx: TelegrafContext) => {
-  if (ctx.updateType === 'message' || 'callbackQuery') {
+  if (ctx.from) {
     const user: IUser = await UserService.getUser(ctx.from!.id)
 
     if (user) {
@@ -43,10 +43,12 @@ export default async (ctx: TelegrafContext) => {
         ctx.scene.enter('reg1')
       }
     } else {
-      const rFriend = ctx.message!.text.split(' ')[1]
+      if (ctx.message) {
+        const rFriend = ctx.message!.text.split(' ')[1]
 
-      if (rFriend) {
-        UserService.updateUserRefBonus(rFriend)
+        if (rFriend) {
+          UserService.updateUserRefBonus(rFriend)
+        }
       }
 
       await UserService.createUser(ctx.from!.id)
