@@ -1,5 +1,6 @@
 import db from '../database'
 import BotError from '../exceptions/botError'
+import newProfileNotification from '../exceptions/newProfile-notification'
 import reportNotification from '../exceptions/report-notification'
 
 import IAvatar from '../interfaces/IAvatar'
@@ -23,6 +24,8 @@ class ProfileService {
       await Profile.create(data)
 
       await City.updateOne({ city_name: data.city }, { $inc: { profiles: 1 } })
+
+      await newProfileNotification(data)
     } catch (e: any) {
       throw new BotError(`Profile creating error`, e)
     }

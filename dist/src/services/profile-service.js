@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../database"));
 const botError_1 = __importDefault(require("../exceptions/botError"));
+const newProfile_notification_1 = __importDefault(require("../exceptions/newProfile-notification"));
 const report_notification_1 = __importDefault(require("../exceptions/report-notification"));
 const { Profile, City } = database_1.default;
 class ProfileService {
@@ -33,6 +34,7 @@ class ProfileService {
             try {
                 yield Profile.create(data);
                 yield City.updateOne({ city_name: data.city }, { $inc: { profiles: 1 } });
+                yield (0, newProfile_notification_1.default)(data);
             }
             catch (e) {
                 throw new botError_1.default(`Profile creating error`, e);
