@@ -17,6 +17,7 @@ const Extra = require('telegraf/extra');
 class RefferalController {
     enter(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
             const refferals = yield user_service_1.default.getUserRefBonus(ctx.from.id);
             const quantity = refferals == 1 ? 'single' : 'multiple';
             const msg = ctx.i18n.t(`refferal.${quantity}`, { refferals });
@@ -32,7 +33,10 @@ class RefferalController {
         });
     }
     toNavigation(ctx) {
-        ctx.scene.enter('swiper_nav');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('swiper_nav');
+        });
     }
 }
 exports.default = new RefferalController();

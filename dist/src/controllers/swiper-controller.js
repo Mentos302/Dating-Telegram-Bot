@@ -21,6 +21,7 @@ class SwiperController {
     constructor() {
         this.choose = (ctx) => __awaiter(this, void 0, void 0, function* () {
             var _a;
+            ctx.answerCbQuery();
             const { from, session, callbackQuery } = ctx;
             const { candidates } = session;
             if (candidates) {
@@ -34,11 +35,12 @@ class SwiperController {
                 }
                 else {
                     if (like) {
-                        session.daily_likes++;
-                        if (!(session.daily_likes % 5) && ctx.from) {
-                            user_service_1.default.updateDailyLikes((_a = ctx.from) === null || _a === void 0 ? void 0 : _a.id, session.daily_likes);
+                        let likes = session.daily_likes ? session.daily_likes : 0;
+                        likes++;
+                        if (!(likes % 5) && ctx.from) {
+                            yield user_service_1.default.updateDailyLikes((_a = ctx.from) === null || _a === void 0 ? void 0 : _a.id, likes);
                         }
-                        this.sendLike(ctx, chat_id);
+                        yield this.sendLike(ctx, chat_id);
                     }
                     yield relations_service_1.default.newRelation(from.id, chat_id, like);
                     if (candidates.length) {
@@ -88,10 +90,11 @@ class SwiperController {
     }
     report(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
             if (ctx.session.candidates) {
                 const { chat_id } = ctx.session.candidates[0];
-                profile_service_1.default.reportProfile(ctx.session.candidates[0]);
-                relations_service_1.default.newRelation(ctx.from.id, chat_id, false);
+                yield profile_service_1.default.reportProfile(ctx.session.candidates[0]);
+                yield relations_service_1.default.newRelation(ctx.from.id, chat_id, false);
                 ctx.session.candidates.shift();
                 display_controller_1.default.showCandidates(ctx, ctx.session.candidates[0]);
             }
@@ -99,7 +102,7 @@ class SwiperController {
     }
     sendLike({ telegram, i18n }, chat_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const likes = yield profile_service_1.default.updateUserLikes(chat_id);
+            const likes = yield profile_service_1.default.updateProfileLikes(chat_id);
             if (likes && likes % 3 === 0) {
                 try {
                     yield telegram.sendMessage(chat_id, `${i18n.t('likely.alert1')} <b>${likes} ${i18n.t('likely.alert2')}</b>\n\n${i18n.t('likely.alert3')}`, Extra.HTML().markup((m) => m.inlineKeyboard([
@@ -118,10 +121,16 @@ class SwiperController {
         });
     }
     toRefferal(ctx) {
-        ctx.scene.enter('refferal');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('refferal');
+        });
     }
     toNavigation(ctx) {
-        ctx.scene.enter('swiper_nav');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('swiper_nav');
+        });
     }
 }
 exports.default = new SwiperController();

@@ -15,9 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const getCityCoords_1 = __importDefault(require("./getCityCoords"));
 const getNearestCities_1 = __importDefault(require("./getNearestCities"));
 exports.default = (name) => __awaiter(void 0, void 0, void 0, function* () {
-    const city = yield (0, getCityCoords_1.default)(name);
-    if (city) {
-        const nearlies = yield (0, getNearestCities_1.default)(city);
-        return nearlies;
+    try {
+        const city = yield (0, getCityCoords_1.default)(name);
+        if (city) {
+            const nearlies = yield (0, getNearestCities_1.default)(city);
+            return nearlies;
+        }
+    }
+    catch (e) {
+        throw e;
     }
 });

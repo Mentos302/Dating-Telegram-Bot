@@ -16,10 +16,15 @@ const getProfilesByCity_1 = __importDefault(require("./getProfilesByCity"));
 const relationsFilter_1 = __importDefault(require("./relationsFilter"));
 const compatibilityValidation_1 = __importDefault(require("./compatibilityValidation"));
 exports.default = (liker, city, relations) => __awaiter(void 0, void 0, void 0, function* () {
-    let profiles = yield (0, getProfilesByCity_1.default)(liker.chat_id, city);
-    if (relations === null || relations === void 0 ? void 0 : relations.length) {
-        profiles = yield (0, relationsFilter_1.default)(profiles, relations);
+    try {
+        let profiles = yield (0, getProfilesByCity_1.default)(liker.chat_id, city);
+        if (relations === null || relations === void 0 ? void 0 : relations.length) {
+            profiles = yield (0, relationsFilter_1.default)(profiles, relations);
+        }
+        const candidates = profiles.filter((e) => (0, compatibilityValidation_1.default)(liker, e));
+        return candidates;
     }
-    const candidates = profiles.filter((e) => (0, compatibilityValidation_1.default)(liker, e));
-    return candidates;
+    catch (e) {
+        throw e;
+    }
 });

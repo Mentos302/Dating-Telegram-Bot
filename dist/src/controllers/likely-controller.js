@@ -19,6 +19,7 @@ const Extra = require('telegraf/extra');
 class LikelyContoroller {
     constructor() {
         this.choose = (ctx) => __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
             const { from, session, callbackQuery } = ctx;
             if (session.likely_candidates) {
                 const { chat_id } = session.likely_candidates[0];
@@ -55,10 +56,11 @@ class LikelyContoroller {
     }
     report(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
             if (ctx.session.likely_candidates) {
                 const { chat_id } = ctx.session.likely_candidates[0];
-                profile_service_1.default.reportProfile(ctx.session.likely_candidates[0]);
-                relations_service_1.default.updateLikely(ctx.from.id, chat_id);
+                yield profile_service_1.default.reportProfile(ctx.session.likely_candidates[0]);
+                yield relations_service_1.default.updateLikely(ctx.from.id, chat_id);
                 ctx.session.likely_candidates.shift();
                 display_controller_1.default.showCandidates(ctx, ctx.session.likely_candidates[0]);
             }
@@ -89,18 +91,24 @@ class LikelyContoroller {
         });
     }
     continue(ctx) {
-        const candidates = ctx.session.likely_candidates;
-        candidates === null || candidates === void 0 ? void 0 : candidates.shift();
-        ctx.scene.state.is_first = true;
-        if (candidates === null || candidates === void 0 ? void 0 : candidates.length) {
-            display_controller_1.default.showCandidates(ctx, candidates[0]);
-        }
-        else {
-            ctx.scene.enter('swiper_main', ctx.scene.state);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            const candidates = ctx.session.likely_candidates;
+            candidates === null || candidates === void 0 ? void 0 : candidates.shift();
+            ctx.scene.state.is_first = true;
+            if (candidates === null || candidates === void 0 ? void 0 : candidates.length) {
+                display_controller_1.default.showCandidates(ctx, candidates[0]);
+            }
+            else {
+                ctx.scene.enter('swiper_main', ctx.scene.state);
+            }
+        });
     }
     toNavigation(ctx) {
-        ctx.scene.enter('swiper_menu');
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('swiper_menu');
+        });
     }
 }
 exports.default = new LikelyContoroller();

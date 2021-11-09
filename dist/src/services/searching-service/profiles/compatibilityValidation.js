@@ -1,11 +1,20 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const error_notification_1 = __importDefault(require("../../../exceptions/error-notification"));
 exports.default = (liker, liked) => {
-    if (interestValidation(liker, liked) && ageValidation(liker, liked)) {
-        return liked;
+    try {
+        if (interestValidation(liker, liked) && ageValidation(liker, liked)) {
+            return liked;
+        }
+        else {
+            return false;
+        }
     }
-    else {
-        return false;
+    catch (e) {
+        throw new error_notification_1.default(`Unexpected error with compatibility validation`, e);
     }
 };
 const interestValidation = (liker, liked) => {
@@ -19,7 +28,7 @@ const interestValidation = (liker, liked) => {
 };
 const ageValidation = (liker, liked) => {
     let limit;
-    liker.age < 18 ? (limit = 5) : (limit = 3);
+    liker.age < 18 ? (limit = 3) : (limit = 5);
     if (liked.age < liker.candidateAge || liked.age - liker.candidateAge > limit)
         return false;
     return true;

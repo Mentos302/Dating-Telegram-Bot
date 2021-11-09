@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../database"));
+const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
 const report_notification_1 = __importDefault(require("../exceptions/report-notification"));
 const { Profile, City } = database_1.default;
 class ProfileService {
@@ -23,31 +24,18 @@ class ProfileService {
                 return profile;
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexpected error with profile getting`);
+                throw new error_notification_1.default(`Unexpected error with profile getting`, e);
             }
         });
     }
     createProfile(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { chat_id, age, gender, interest, city, name, avatar, descript, candidateAge, } = data;
-                yield Profile.create({
-                    name,
-                    chat_id,
-                    gender,
-                    interest,
-                    city,
-                    age,
-                    descript,
-                    avatar,
-                    candidateAge,
-                });
-                yield City.updateOne({ city_name: city }, { $inc: { profiles: 1 } });
+                yield Profile.create(data);
+                yield City.updateOne({ city_name: data.city }, { $inc: { profiles: 1 } });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Profile creating error`);
+                throw new error_notification_1.default(`Profile creating error`, e);
             }
         });
     }
@@ -57,8 +45,7 @@ class ProfileService {
                 yield Profile.deleteOne({ chat_id });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexpected error with profile deleting`);
+                throw new error_notification_1.default(`Unexpected error with profile deleting`, e);
             }
         });
     }
@@ -68,8 +55,7 @@ class ProfileService {
                 yield Profile.updateOne({ chat_id }, { avatar });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with avatar changing`);
+                throw new error_notification_1.default(`Unexprected error with avatar changing`, e);
             }
         });
     }
@@ -79,21 +65,19 @@ class ProfileService {
                 yield Profile.updateOne({ chat_id }, { decsript });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with desc changing`);
+                throw new error_notification_1.default(`Unexprected error with desc changing`, e);
             }
         });
     }
-    updateUserLikes(chat_id) {
+    updateProfileLikes(chat_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { likes } = yield Profile.findOneAndUpdate({ chat_id }, { $inc: { likes: 1 } }, { new: true, useFindAndModify: false });
+                const profile = yield Profile.findOneAndUpdate({ chat_id }, { $inc: { likes: 1 } }, { new: true, useFindAndModify: false });
                 yield Profile.updateOne({ chat_id }, { $inc: { attraction: 1 } });
-                return likes;
+                return profile.likes;
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with user likes updating`);
+                throw new error_notification_1.default(`Unexprected error with user likes updating`, e);
             }
         });
     }
@@ -111,8 +95,7 @@ class ProfileService {
                 }
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexpected error with profile reporting`);
+                throw new error_notification_1.default(`Unexpected error with profile reporting`, e);
             }
         });
     }

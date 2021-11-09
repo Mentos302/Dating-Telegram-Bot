@@ -16,11 +16,16 @@ const profile_service_1 = __importDefault(require("../services/profile-service")
 const display_controller_1 = __importDefault(require("./display-controller"));
 const Extra = require('telegraf/extra');
 class RegController {
-    greeting({ replyWithHTML, i18n }) {
-        replyWithHTML(i18n.t('reg.greeting'), Extra.markup((m) => m.inlineKeyboard([m.callbackButton(i18n.t('yes'), 'okay')])));
+    greeting(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ctx.replyWithHTML(ctx.i18n.t('reg.greeting'), Extra.markup((m) => m.inlineKeyboard([m.callbackButton(ctx.i18n.t('yes'), 'okay')])));
+        });
     }
-    regStart({ scene }) {
-        scene.enter('reg2');
+    regStart(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('reg2');
+        });
     }
     reqAge({ reply, i18n }) {
         reply(i18n.t('reg.age'), Extra.HTML());
@@ -37,11 +42,17 @@ class RegController {
             m.callbackButton(i18n.t('reg.sex_girl'), 'girl'),
         ])));
     }
-    resGenderMale({ scene }) {
-        scene.enter('reg4', Object.assign(Object.assign({}, scene.state), { gender: 1 }));
+    resGenderMale(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('reg4', Object.assign(Object.assign({}, ctx.scene.state), { gender: 1 }));
+        });
     }
-    resGenderFemale({ scene }) {
-        scene.enter('reg4', Object.assign(Object.assign({}, scene.state), { gender: 0 }));
+    resGenderFemale(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('reg4', Object.assign(Object.assign({}, ctx.scene.state), { gender: 0 }));
+        });
     }
     reqSex({ replyWithHTML, i18n }) {
         replyWithHTML(i18n.t('reg.int'), Extra.markup((m) => m.inlineKeyboard([
@@ -51,20 +62,23 @@ class RegController {
         ])));
     }
     resSex(ctx) {
-        let sex;
-        switch (ctx.callbackQuery.data) {
-            case 'girls':
-                sex = 0;
-                break;
-            case 'boys':
-                sex = 1;
-                break;
-            case 'both':
-                sex = 2;
-                break;
-        }
-        ctx.scene.state.interest = sex;
-        ctx.reply(ctx.i18n.t('reg.candidateage'), Extra.HTML());
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            let sex;
+            switch (ctx.callbackQuery.data) {
+                case 'girls':
+                    sex = 0;
+                    break;
+                case 'boys':
+                    sex = 1;
+                    break;
+                case 'both':
+                    sex = 2;
+                    break;
+            }
+            ctx.scene.state.interest = sex;
+            ctx.reply(ctx.i18n.t('reg.candidateage'), Extra.HTML());
+        });
     }
     resCandidateAge(ctx) {
         var _a;
@@ -86,7 +100,8 @@ class RegController {
                 citiesCache: [],
                 relations: [],
             };
-            display_controller_1.default.getCandidates(ctx.session).catch((e) => console.log(e));
+            if (!ctx.session.searchingNow)
+                display_controller_1.default.getCandidates(ctx.session);
         });
     }
     reqName({ replyWithHTML, i18n }) {
@@ -97,14 +112,21 @@ class RegController {
     resName({ message, scene }) {
         scene.enter('reg7', Object.assign(Object.assign({}, scene.state), { name: message === null || message === void 0 ? void 0 : message.text }));
     }
-    resNameDefault({ from, scene }) {
-        scene.enter('reg7', Object.assign(Object.assign({}, scene.state), { name: from === null || from === void 0 ? void 0 : from.first_name }));
+    resNameDefault(ctx) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('reg7', Object.assign(Object.assign({}, ctx.scene.state), { name: (_a = ctx.from) === null || _a === void 0 ? void 0 : _a.first_name }));
+        });
     }
     reqDesc({ replyWithHTML, i18n }) {
         replyWithHTML(i18n.t('reg.desc'), Extra.markup((m) => m.inlineKeyboard([m.callbackButton(i18n.t('reg.desc_skip'), 'skip')])));
     }
-    resDescSkip({ scene }) {
-        scene.enter('reg8', Object.assign(Object.assign({}, scene.state), { descript: `` }));
+    resDescSkip(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('reg8', Object.assign(Object.assign({}, ctx.scene.state), { descript: `` }));
+        });
     }
     resDesc({ message, scene }) {
         let linkFilter = message === null || message === void 0 ? void 0 : message.text.replace(/\./g, ' ').replace(/@/g, ' ');
@@ -149,6 +171,7 @@ class RegController {
     }
     resConfirm(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
             const { from, scene, session, callbackQuery } = ctx;
             const userProfile = Object.assign(Object.assign({}, scene.state), { chat_id: from === null || from === void 0 ? void 0 : from.id });
             session.profile = userProfile;

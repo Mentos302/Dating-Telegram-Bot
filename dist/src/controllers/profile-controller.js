@@ -12,35 +12,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
 const profile_service_1 = __importDefault(require("../services/profile-service"));
 const relations_service_1 = __importDefault(require("../services/relations-service"));
 const Extra = require('telegraf/extra');
 class ProfileController {
     sendProfile(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, age, city, descript, avatar } = ctx.session.profile;
-            if (avatar.is_video) {
-                yield ctx.replyWithVideo(`${avatar.file_id}`, Extra.HTML()
-                    .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
-                    .markup((m) => {
-                    m.resize();
-                }));
+            try {
+                const { name, age, city, descript, avatar } = ctx.session.profile;
+                if (avatar.is_video) {
+                    yield ctx.replyWithVideo(`${avatar.file_id}`, Extra.HTML()
+                        .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
+                        .markup((m) => {
+                        m.resize();
+                    }));
+                }
+                else {
+                    yield ctx.replyWithPhoto(`${avatar.file_id}`, Extra.HTML()
+                        .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
+                        .markup((m) => {
+                        m.resize();
+                    }));
+                }
+                ctx.replyWithHTML(ctx.i18n.t('profile.main'), Extra.HTML().markup((m) => m.inlineKeyboard([
+                    [
+                        m.callbackButton('📋', 'prof_menu1'),
+                        m.callbackButton('📸 ', 'prof_menu2'),
+                        m.callbackButton('📝', 'prof_menu3'),
+                    ],
+                    [m.callbackButton(ctx.i18n.t('profile.goon'), 'prof_menu4')],
+                ])));
             }
-            else {
-                yield ctx.replyWithPhoto(`${avatar.file_id}`, Extra.HTML()
-                    .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
-                    .markup((m) => {
-                    m.resize();
-                }));
+            catch (e) {
+                throw new error_notification_1.default(`Unexpected error with profile sending`, e);
             }
-            ctx.replyWithHTML(ctx.i18n.t('profile.main'), Extra.HTML().markup((m) => m.inlineKeyboard([
-                [
-                    m.callbackButton('📋', 'prof_menu1'),
-                    m.callbackButton('📸 ', 'prof_menu2'),
-                    m.callbackButton('📝', 'prof_menu3'),
-                ],
-                [m.callbackButton(ctx.i18n.t('profile.goon'), 'prof_menu4')],
-            ])));
         });
     }
     regAgain(ctx) {
@@ -55,7 +61,7 @@ class ProfileController {
         return __awaiter(this, void 0, void 0, function* () {
             const description = ctx.message.text.replace(/\./g, ' ').replace(/@/g, ' ');
             if (ctx.from) {
-                profile_service_1.default.changeDesc((_a = ctx.from) === null || _a === void 0 ? void 0 : _a.id, description);
+                yield profile_service_1.default.changeDesc((_a = ctx.from) === null || _a === void 0 ? void 0 : _a.id, description);
                 ctx.session.profile.descript = description;
                 ctx.scene.enter('profile_menu');
             }
@@ -67,8 +73,8 @@ class ProfileController {
                 is_video: false,
                 file_id: ctx.message.photo[0].file_id,
             };
-            profile_service_1.default.changeAvatar(ctx.from.id, avatar);
-            relations_service_1.default.deleteLikes(ctx.from.id);
+            yield profile_service_1.default.changeAvatar(ctx.from.id, avatar);
+            yield relations_service_1.default.deleteLikes(ctx.from.id);
             ctx.session.profile.avatar = avatar;
             ctx.scene.enter('profile_menu');
         });
@@ -79,23 +85,35 @@ class ProfileController {
                 is_video: true,
                 file_id: ctx.message.video.file_id,
             };
-            profile_service_1.default.changeAvatar(ctx.from.id, avatar);
-            relations_service_1.default.deleteLikes(ctx.from.id);
+            yield profile_service_1.default.changeAvatar(ctx.from.id, avatar);
+            yield relations_service_1.default.deleteLikes(ctx.from.id);
             ctx.session.profile.avatar = avatar;
             ctx.scene.enter('profile_menu');
         });
     }
     toRegAgain(ctx) {
-        ctx.scene.enter(`reg2`);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter(`reg2`);
+        });
     }
     toChangeAvatar(ctx) {
-        ctx.scene.enter(`editavatar`);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter(`editavatar`);
+        });
     }
     toChangeDescript(ctx) {
-        ctx.scene.enter(`editdescript`);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter(`editdescript`);
+        });
     }
     toSwiper(ctx) {
-        ctx.scene.enter('swiper_main', { is_first: true });
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ctx.answerCbQuery();
+            ctx.scene.enter('swiper_main', { is_first: true });
+        });
     }
     messageHandler(ctx) {
         ctx.scene.reenter();

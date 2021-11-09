@@ -17,7 +17,8 @@ const database_1 = __importDefault(require("../database"));
 const { User } = database_1.default;
 const relations_service_1 = __importDefault(require("./relations-service"));
 const profile_service_1 = __importDefault(require("./profile-service"));
-class Service {
+const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
+class UserService {
     getUser(chat_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -25,8 +26,7 @@ class Service {
                 return user;
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with getting user`);
+                throw new error_notification_1.default(`Unexpected error with user getting`, e);
             }
         });
     }
@@ -39,8 +39,7 @@ class Service {
                 });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with user creating`);
+                throw new error_notification_1.default(`Unexprected error with user creating`, e);
             }
         });
     }
@@ -50,8 +49,7 @@ class Service {
                 yield User.updateOne({ chat_id }, { last_activity: Math.floor(Date.now() / 1000) });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with activity update`);
+                throw new error_notification_1.default(`Unexprected error with activity update`, e);
             }
         });
     }
@@ -63,8 +61,7 @@ class Service {
                 profile_service_1.default.deleteProfile(chat_id);
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with user removing`);
+                throw new error_notification_1.default(`Unexprected error with user removing`, e);
             }
         });
     }
@@ -74,8 +71,7 @@ class Service {
                 yield User.updateOne({ chat_id }, { daily_likes });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with likes updating`);
+                throw new error_notification_1.default(`Unexprected error with likes updating`, e);
             }
         });
     }
@@ -86,8 +82,7 @@ class Service {
                 return refBonus.refbonus;
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with ref bonus getting`);
+                throw new error_notification_1.default(`Unexprected error with ref bonus getting`, e);
             }
         });
     }
@@ -97,10 +92,9 @@ class Service {
                 yield User.updateOne({ chat_id }, { $inc: { refbonus: 1 } });
             }
             catch (e) {
-                console.log(e);
-                throw new Error(`Unexprected error with ref bonus increasing`);
+                throw new error_notification_1.default(`Unexprected error with ref bonus increasing`, e);
             }
         });
     }
 }
-exports.default = new Service();
+exports.default = new UserService();

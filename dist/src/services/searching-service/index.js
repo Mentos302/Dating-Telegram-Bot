@@ -58,7 +58,7 @@ const searchCandidates = ({ profile, citiesCache, relations, city, }) => __await
         }
     }
     catch (e) {
-        console.log(e);
+        throw e;
     }
 });
 exports.default = searchCandidates;

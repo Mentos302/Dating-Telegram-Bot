@@ -14,17 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const geolib_1 = require("geolib");
 const database_1 = __importDefault(require("../../../database"));
+const error_notification_1 = __importDefault(require("../../../exceptions/error-notification"));
 const { City } = database_1.default;
-exports.default = (from, to) => __awaiter(void 0, void 0, void 0, function* () {
-    const { cached_distances } = from;
-    if (cached_distances === null || cached_distances === void 0 ? void 0 : cached_distances.length) {
-        const data = cached_distances.find((e) => e.pointName === to.name);
-        if (data)
-            return data.distance;
-    }
-    const distance = yield calculateDistance(from, to);
-    return distance;
-});
 const calculateDistance = (from, to) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, lat, lng, profiles } = from;
     const distance = Math.round((0, geolib_1.getDistance)({ latitude: lat, longitude: lng }, { latitude: to.lat, longitude: to.lng }, 1) / 1000);
@@ -33,4 +24,19 @@ const calculateDistance = (from, to) => __awaiter(void 0, void 0, void 0, functi
         City.updateOne({ name: to.name }, { $push: { cached_distances: { pointName: name, distance } } }).catch((e) => console.log(e));
     }
     return distance;
+});
+exports.default = (from, to) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { cached_distances } = from;
+        if (cached_distances === null || cached_distances === void 0 ? void 0 : cached_distances.length) {
+            const data = cached_distances.find((e) => e.pointName === to.name);
+            if (data)
+                return data.distance;
+        }
+        const distance = yield calculateDistance(from, to);
+        return distance;
+    }
+    catch (e) {
+        throw new error_notification_1.default(`Unexpected error with distance calculating`, e);
+    }
 });

@@ -20,7 +20,6 @@ const telegraf_1 = __importDefault(require("telegraf"));
 const telegraf_i18n_1 = __importDefault(require("telegraf-i18n"));
 const stage_1 = __importDefault(require("./stage"));
 const update_middleware_1 = __importDefault(require("./middlewares/update-middleware"));
-const error_notification_1 = __importDefault(require("./exceptions/error-notification"));
 const rateLimit = require('telegraf-ratelimit');
 const session = require('telegraf/session');
 exports.default = () => {
@@ -36,7 +35,11 @@ exports.default = () => {
     bot.use(rateLimit({
         window: 1000,
         limit: 1,
-        onLimitExceeded: (ctx) => ctx.reply('Спокійніше, бо я не встигаю 😤'),
+        onLimitExceeded: (ctx) => {
+            if (ctx.updateType == 'callback_query')
+                ctx.answerCbQuery();
+            ctx.reply('Спокійніше, бо я не встигаю 😤');
+        },
     }));
     bot.use(session({
         getSessionKey: (ctx) => ctx.from &&
@@ -44,7 +47,7 @@ exports.default = () => {
     }));
     (0, stage_1.default)(bot);
     bot.use(update_middleware_1.default);
-    bot.catch((error) => (0, error_notification_1.default)(bot, error));
+    bot.catch((error) => error.notificate());
     database_1.default.connection.once('open', () => __awaiter(void 0, void 0, void 0, function* () {
         console.log('Connected to MongoDB');
         app.use(bot.webhookCallback('/secreting'));
