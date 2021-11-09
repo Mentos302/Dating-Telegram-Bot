@@ -18,8 +18,6 @@ const user_service_1 = __importDefault(require("../services/user-service"));
 const display_controller_1 = __importDefault(require("../controllers/display-controller"));
 exports.default = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (ctx.updateType == 'callback_query')
-            yield ctx.answerCbQuery();
         if (ctx.from) {
             const user = yield user_service_1.default.getUser(ctx.from.id);
             if (user) {
@@ -38,8 +36,7 @@ exports.default = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                         relations: (yield relations_service_1.default.getUserRelations(ctx.from.id)) || [],
                         daily_likes: user.daily_likes,
                     };
-                    if (!ctx.session.searchingNow)
-                        display_controller_1.default.getCandidates(ctx.session);
+                    yield display_controller_1.default.getCandidates(ctx.session);
                     const likes = yield relations_service_1.default.checkNewLikes(ctx.from.id);
                     likes && likes.length
                         ? ctx.scene.enter('likely', { is_first: true, likes })
@@ -62,7 +59,7 @@ exports.default = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (e) {
-        ctx.reply(`⚙️ Шось пішло не так, спробуй ще раз трохи пізніше.`);
+        ctx.reply('⚙️ Щось пішло не так, спробуй ще раз трохи пізніше');
         throw e;
     }
 });

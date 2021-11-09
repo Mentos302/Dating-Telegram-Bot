@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const cyrillic_to_translit_js_1 = __importDefault(require("cyrillic-to-translit-js"));
 const database_1 = __importDefault(require("../../../database"));
-const error_notification_1 = __importDefault(require("../../../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../../../exceptions/botError"));
 const fetch = require('node-fetch');
 const { City } = database_1.default;
 exports.default = (name) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,6 +41,6 @@ exports.default = (name) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (e) {
-        throw new error_notification_1.default(`Unexpected error with city coords getting`, e);
+        throw new botError_1.default(`Unexpected error with city coords getting`, e);
     }
 });

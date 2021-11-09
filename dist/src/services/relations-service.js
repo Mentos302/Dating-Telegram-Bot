@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../database"));
-const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../exceptions/botError"));
 const { Relation } = database_1.default;
 class RelationsService {
     newRelation(host_id, cli_id, host_like) {
@@ -27,7 +27,7 @@ class RelationsService {
                 });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with creating new relation`, e);
+                throw new botError_1.default(`Unexprected error with creating new relation`, e);
             }
         });
     }
@@ -44,7 +44,7 @@ class RelationsService {
                 return likedRelations;
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with new likes checking`, e);
+                throw new botError_1.default(`Unexpected error with new likes checking`, e);
             }
         });
     }
@@ -60,7 +60,7 @@ class RelationsService {
                 return relations;
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with getting user relations`, e);
+                throw new botError_1.default(`Unexprected error with getting user relations`, e);
             }
         });
     }
@@ -70,7 +70,7 @@ class RelationsService {
                 yield Relation.updateOne({ host_id, cli_id }, { cli_checked: true });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with likely updating`, e);
+                throw new botError_1.default(`Unexprected error with likely updating`, e);
             }
         });
     }
@@ -80,7 +80,7 @@ class RelationsService {
                 yield Relation.deleteMany({ cli_id });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with likes deleting`, e);
+                throw new botError_1.default(`Unexpected error with likes deleting`, e);
             }
         });
     }
@@ -91,7 +91,7 @@ class RelationsService {
                 yield Relation.deleteMany({ cli_id });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with activities deleting`, e);
+                throw new botError_1.default(`Unexpected error with activities deleting`, e);
             }
         });
     }

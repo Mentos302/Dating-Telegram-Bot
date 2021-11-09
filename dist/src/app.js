@@ -13,17 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
-const ngrok_1 = __importDefault(require("ngrok"));
 const database_1 = __importDefault(require("./database"));
-const express_1 = __importDefault(require("express"));
 const telegraf_1 = __importDefault(require("telegraf"));
 const telegraf_i18n_1 = __importDefault(require("telegraf-i18n"));
 const stage_1 = __importDefault(require("./stage"));
 const update_middleware_1 = __importDefault(require("./middlewares/update-middleware"));
+const error_notification_1 = __importDefault(require("./exceptions/error-notification"));
 const rateLimit = require('telegraf-ratelimit');
 const session = require('telegraf/session');
 exports.default = () => {
-    const app = (0, express_1.default)();
     const bot = new telegraf_1.default(process.env.BOT_TOKEN);
     const i18n = new telegraf_i18n_1.default({
         directory: path_1.default.resolve(__dirname, 'locales'),
@@ -36,8 +34,6 @@ exports.default = () => {
         window: 1000,
         limit: 1,
         onLimitExceeded: (ctx) => {
-            if (ctx.updateType == 'callback_query')
-                ctx.answerCbQuery();
             ctx.reply('Спокійніше, бо я не встигаю 😤');
         },
     }));
@@ -47,14 +43,11 @@ exports.default = () => {
     }));
     (0, stage_1.default)(bot);
     bot.use(update_middleware_1.default);
-    bot.catch((error) => error.notificate());
+    bot.catch(error_notification_1.default);
     database_1.default.connection.once('open', () => __awaiter(void 0, void 0, void 0, function* () {
         console.log('Connected to MongoDB');
-        app.use(bot.webhookCallback('/secreting'));
-        bot.telegram.setWebhook(`${yield ngrok_1.default.connect(8443)}/secreting`);
-        app.listen(8443, () => {
-            console.log('Bot has been started ...');
-        });
+        bot.launch();
+        console.log(`Bot has been started`);
     }));
     return bot;
 };

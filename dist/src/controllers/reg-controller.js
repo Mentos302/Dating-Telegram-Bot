@@ -23,7 +23,6 @@ class RegController {
     }
     regStart(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('reg2');
         });
     }
@@ -44,13 +43,11 @@ class RegController {
     }
     resGenderMale(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('reg4', Object.assign(Object.assign({}, ctx.scene.state), { gender: 1 }));
         });
     }
     resGenderFemale(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('reg4', Object.assign(Object.assign({}, ctx.scene.state), { gender: 0 }));
         });
     }
@@ -63,7 +60,6 @@ class RegController {
     }
     resSex(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             let sex;
             switch (ctx.callbackQuery.data) {
                 case 'girls':
@@ -100,8 +96,7 @@ class RegController {
                 citiesCache: [],
                 relations: [],
             };
-            if (!ctx.session.searchingNow)
-                display_controller_1.default.getCandidates(ctx.session);
+            yield display_controller_1.default.getCandidates(ctx.session);
         });
     }
     reqName({ replyWithHTML, i18n }) {
@@ -115,7 +110,6 @@ class RegController {
     resNameDefault(ctx) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('reg7', Object.assign(Object.assign({}, ctx.scene.state), { name: (_a = ctx.from) === null || _a === void 0 ? void 0 : _a.first_name }));
         });
     }
@@ -124,7 +118,6 @@ class RegController {
     }
     resDescSkip(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('reg8', Object.assign(Object.assign({}, ctx.scene.state), { descript: `` }));
         });
     }
@@ -171,7 +164,6 @@ class RegController {
     }
     resConfirm(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             const { from, scene, session, callbackQuery } = ctx;
             const userProfile = Object.assign(Object.assign({}, scene.state), { chat_id: from === null || from === void 0 ? void 0 : from.id });
             session.profile = userProfile;

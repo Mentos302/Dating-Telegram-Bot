@@ -14,13 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const telegraf_1 = require("telegraf");
 const index_1 = __importDefault(require("../../index"));
-const botError_1 = __importDefault(require("./botError"));
-exports.default = (e) => __awaiter(void 0, void 0, void 0, function* () {
-    if (e instanceof botError_1.default) {
-        e.notificate();
+exports.default = (profile) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name, age, city, descript, avatar } = profile;
+        yield index_1.default.telegram.sendMessage(process.env.ADMIN_ID, `<b>🚨 Новий профіль в сервісі: </b>`, telegraf_1.Extra.HTML());
+        avatar.is_video
+            ? index_1.default.telegram.sendVideo(process.env.ADMIN_ID, `${profile.avatar.file_id}`, telegraf_1.Extra.caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`).HTML())
+            : index_1.default.telegram.sendPhoto(process.env.ADMIN_ID, `${profile.avatar.file_id}`, telegraf_1.Extra.caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`).HTML());
     }
-    else {
-        console.log(e);
-        index_1.default.telegram.sendMessage(process.env.ADMIN_ID, `<b>🚨 Увага нова помилка:</b>\n\n<code>${e}</code>`, telegraf_1.Extra.HTML());
+    catch (e) {
+        throw new Error(`Unexpected error with report baned sending`);
     }
 });

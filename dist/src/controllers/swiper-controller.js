@@ -90,7 +90,7 @@ class SwiperController {
     }
     report(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
+            ctx.answerCbQuery();
             if (ctx.session.candidates) {
                 const { chat_id } = ctx.session.candidates[0];
                 yield profile_service_1.default.reportProfile(ctx.session.candidates[0]);
@@ -122,13 +122,11 @@ class SwiperController {
     }
     toRefferal(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('refferal');
         });
     }
     toNavigation(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('swiper_nav');
         });
     }

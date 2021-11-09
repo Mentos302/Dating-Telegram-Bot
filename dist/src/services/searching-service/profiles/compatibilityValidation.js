@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const error_notification_1 = __importDefault(require("../../../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../../../exceptions/botError"));
 exports.default = (liker, liked) => {
     try {
         if (interestValidation(liker, liked) && ageValidation(liker, liked)) {
@@ -14,7 +14,7 @@ exports.default = (liker, liked) => {
         }
     }
     catch (e) {
-        throw new error_notification_1.default(`Unexpected error with compatibility validation`, e);
+        throw new botError_1.default(`Unexpected error with compatibility validation`, e);
     }
 };
 const interestValidation = (liker, liked) => {

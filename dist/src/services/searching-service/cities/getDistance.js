@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const geolib_1 = require("geolib");
 const database_1 = __importDefault(require("../../../database"));
-const error_notification_1 = __importDefault(require("../../../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../../../exceptions/botError"));
 const { City } = database_1.default;
 const calculateDistance = (from, to) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, lat, lng, profiles } = from;
@@ -37,6 +37,6 @@ exports.default = (from, to) => __awaiter(void 0, void 0, void 0, function* () {
         return distance;
     }
     catch (e) {
-        throw new error_notification_1.default(`Unexpected error with distance calculating`, e);
+        throw new botError_1.default(`Unexpected error with distance calculating`, e);
     }
 });

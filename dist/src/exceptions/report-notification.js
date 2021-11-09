@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const telegraf_1 = require("telegraf");
 const index_1 = __importDefault(require("../../index"));
-const error_notification_1 = __importDefault(require("./error-notification"));
 exports.default = (profile) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, age, city, descript, avatar } = profile;
@@ -24,6 +23,6 @@ exports.default = (profile) => __awaiter(void 0, void 0, void 0, function* () {
             : index_1.default.telegram.sendPhoto(process.env.ADMIN_ID, `${profile.avatar.file_id}`, telegraf_1.Extra.caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`).HTML());
     }
     catch (e) {
-        throw new error_notification_1.default(`Unexpected error with report baned sending`, e);
+        throw new Error(`Unexpected error with report baned sending`);
     }
 });

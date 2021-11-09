@@ -17,7 +17,7 @@ const database_1 = __importDefault(require("../database"));
 const { User } = database_1.default;
 const relations_service_1 = __importDefault(require("./relations-service"));
 const profile_service_1 = __importDefault(require("./profile-service"));
-const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../exceptions/botError"));
 class UserService {
     getUser(chat_id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,7 +26,7 @@ class UserService {
                 return user;
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with user getting`, e);
+                throw new botError_1.default(`Unexpected error with user getting`, e);
             }
         });
     }
@@ -39,7 +39,7 @@ class UserService {
                 });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with user creating`, e);
+                throw new botError_1.default(`Unexprected error with user creating`, e);
             }
         });
     }
@@ -49,7 +49,7 @@ class UserService {
                 yield User.updateOne({ chat_id }, { last_activity: Math.floor(Date.now() / 1000) });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with activity update`, e);
+                throw new botError_1.default(`Unexprected error with activity update`, e);
             }
         });
     }
@@ -61,7 +61,7 @@ class UserService {
                 profile_service_1.default.deleteProfile(chat_id);
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with user removing`, e);
+                throw new botError_1.default(`Unexprected error with user removing`, e);
             }
         });
     }
@@ -71,7 +71,7 @@ class UserService {
                 yield User.updateOne({ chat_id }, { daily_likes });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with likes updating`, e);
+                throw new botError_1.default(`Unexprected error with likes updating`, e);
             }
         });
     }
@@ -82,7 +82,7 @@ class UserService {
                 return refBonus.refbonus;
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with ref bonus getting`, e);
+                throw new botError_1.default(`Unexprected error with ref bonus getting`, e);
             }
         });
     }
@@ -92,7 +92,7 @@ class UserService {
                 yield User.updateOne({ chat_id }, { $inc: { refbonus: 1 } });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with ref bonus increasing`, e);
+                throw new botError_1.default(`Unexprected error with ref bonus increasing`, e);
             }
         });
     }

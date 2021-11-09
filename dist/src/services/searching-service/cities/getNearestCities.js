@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const getDistance_1 = __importDefault(require("./getDistance"));
 const database_1 = __importDefault(require("../../../database"));
-const error_notification_1 = __importDefault(require("../../../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../../../exceptions/botError"));
 const { City } = database_1.default;
 exports.default = (host_city) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -36,6 +36,6 @@ exports.default = (host_city) => __awaiter(void 0, void 0, void 0, function* () 
         return cities;
     }
     catch (e) {
-        throw new error_notification_1.default(`Unexpected error with nearest cities getting`, e);
+        throw new botError_1.default(`Unexpected error with nearest cities getting`, e);
     }
 });

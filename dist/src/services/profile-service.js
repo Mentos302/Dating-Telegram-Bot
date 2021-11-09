@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../database"));
-const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../exceptions/botError"));
 const report_notification_1 = __importDefault(require("../exceptions/report-notification"));
 const { Profile, City } = database_1.default;
 class ProfileService {
@@ -24,7 +24,7 @@ class ProfileService {
                 return profile;
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with profile getting`, e);
+                throw new botError_1.default(`Unexpected error with profile getting`, e);
             }
         });
     }
@@ -35,7 +35,7 @@ class ProfileService {
                 yield City.updateOne({ city_name: data.city }, { $inc: { profiles: 1 } });
             }
             catch (e) {
-                throw new error_notification_1.default(`Profile creating error`, e);
+                throw new botError_1.default(`Profile creating error`, e);
             }
         });
     }
@@ -45,7 +45,7 @@ class ProfileService {
                 yield Profile.deleteOne({ chat_id });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with profile deleting`, e);
+                throw new botError_1.default(`Unexpected error with profile deleting`, e);
             }
         });
     }
@@ -55,7 +55,7 @@ class ProfileService {
                 yield Profile.updateOne({ chat_id }, { avatar });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with avatar changing`, e);
+                throw new botError_1.default(`Unexprected error with avatar changing`, e);
             }
         });
     }
@@ -65,7 +65,7 @@ class ProfileService {
                 yield Profile.updateOne({ chat_id }, { decsript });
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with desc changing`, e);
+                throw new botError_1.default(`Unexprected error with desc changing`, e);
             }
         });
     }
@@ -77,7 +77,7 @@ class ProfileService {
                 return profile.likes;
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexprected error with user likes updating`, e);
+                throw new botError_1.default(`Unexprected error with user likes updating`, e);
             }
         });
     }
@@ -95,7 +95,7 @@ class ProfileService {
                 }
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with profile reporting`, e);
+                throw new botError_1.default(`Unexpected error with profile reporting`, e);
             }
         });
     }

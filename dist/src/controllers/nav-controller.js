@@ -27,7 +27,6 @@ class NavigationController {
     }
     closeConfirmation(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.replyWithHTML(ctx.i18n.t('close.main'), Extra.markup((m) => m.inlineKeyboard([
                 m.callbackButton(ctx.i18n.t('close.confirm'), 'close_confirm'),
                 m.callbackButton(ctx.i18n.t('close.reject'), 'go_back'),
@@ -36,7 +35,6 @@ class NavigationController {
     }
     closeProfile(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             yield profile_service_1.default.deleteProfile(ctx.from.id);
             yield relations_service_1.default.deleteAllActivities(ctx.from.id);
             ctx.replyWithHTML(ctx.i18n.t('close.bye'), Extra.markup((m) => m.inlineKeyboard([
@@ -47,13 +45,11 @@ class NavigationController {
     }
     toMainScene(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('swiper_main', { is_first: true });
         });
     }
     toProfileScene(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('profile_menu');
         });
     }

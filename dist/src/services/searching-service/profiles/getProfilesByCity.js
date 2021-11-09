@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../../database"));
-const error_notification_1 = __importDefault(require("../../../exceptions/error-notification"));
+const botError_1 = __importDefault(require("../../../exceptions/botError"));
 const { Profile } = database_1.default;
 exports.default = (chat_id, city) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -25,6 +25,6 @@ exports.default = (chat_id, city) => __awaiter(void 0, void 0, void 0, function*
         return cityProfiles;
     }
     catch (e) {
-        throw new error_notification_1.default(`Unexpected error with profiles getting by city`, e);
+        throw new botError_1.default(`Unexpected error with profiles getting by city`, e);
     }
 });

@@ -25,7 +25,7 @@ class DisplayController {
             let { is_first, likes } = scene.state;
             const candidates = session.candidates || [];
             if (!likes && candidates.length < 10 && !session.searchingNow) {
-                this.getCandidates(session);
+                yield this.getCandidates(session);
             }
             if (profile && is_first) {
                 profile.avatar.is_video
@@ -43,10 +43,8 @@ class DisplayController {
     }
     getCandidates(session) {
         return __awaiter(this, void 0, void 0, function* () {
-            session.searchingNow = true;
             try {
                 const searching = yield (0, searching_service_1.default)(session);
-                session.searchingNow = false;
                 if (searching) {
                     let { candidates, citiesCache } = searching;
                     if (!citiesCache.length)
@@ -60,12 +58,12 @@ class DisplayController {
                         session.relations.push(e.chat_id);
                     });
                     if (session.candidates.length < 10) {
-                        this.getCandidates(session);
+                        yield this.getCandidates(session);
                     }
                 }
             }
-            catch (error) {
-                error.notificate();
+            catch (e) {
+                throw e;
             }
         });
     }

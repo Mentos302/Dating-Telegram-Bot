@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
 const profile_service_1 = __importDefault(require("../services/profile-service"));
 const relations_service_1 = __importDefault(require("../services/relations-service"));
 const Extra = require('telegraf/extra');
@@ -45,7 +44,7 @@ class ProfileController {
                 ])));
             }
             catch (e) {
-                throw new error_notification_1.default(`Unexpected error with profile sending`, e);
+                throw new Error(`Unexpected error with profile sending`);
             }
         });
     }
@@ -93,25 +92,21 @@ class ProfileController {
     }
     toRegAgain(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter(`reg2`);
         });
     }
     toChangeAvatar(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter(`editavatar`);
         });
     }
     toChangeDescript(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter(`editdescript`);
         });
     }
     toSwiper(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ctx.answerCbQuery();
             ctx.scene.enter('swiper_main', { is_first: true });
         });
     }
