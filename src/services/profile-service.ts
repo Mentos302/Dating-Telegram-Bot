@@ -52,16 +52,16 @@ class ProfileService {
     }
   }
 
-  async updateUserLikes(chat_id: number): Promise<number | undefined> {
+  async updateProfileLikes(chat_id: number): Promise<number | undefined> {
     try {
-      const { likes } = await Profile.findOneAndUpdate(
+      const profile = await Profile.findOneAndUpdate(
         { chat_id },
         { $inc: { likes: 1 } },
         { new: true, useFindAndModify: false }
       )
       await Profile.updateOne({ chat_id }, { $inc: { attraction: 1 } })
 
-      return likes
+      return profile.likes
     } catch (e: any) {
       throw new BotError(`Unexprected error with user likes updating`, e)
     }

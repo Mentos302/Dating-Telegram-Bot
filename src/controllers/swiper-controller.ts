@@ -64,13 +64,12 @@ class SwiperController {
         )
       } else {
         if (like) {
-          session.daily_likes!++
+          let likes = session.daily_likes ? session.daily_likes : 0
+
+          likes++
 
           if (!(session.daily_likes! % 5) && ctx.from) {
-            await UserService.updateDailyLikes(
-              ctx.from?.id,
-              session.daily_likes!
-            )
+            await UserService.updateDailyLikes(ctx.from?.id, likes)
           }
 
           await this.sendLike(ctx, chat_id)
@@ -112,7 +111,7 @@ class SwiperController {
   }
 
   async sendLike({ telegram, i18n }: TelegrafContext, chat_id: number) {
-    const likes = await ProfileService.updateUserLikes(chat_id)
+    const likes = await ProfileService.updateProfileLikes(chat_id)
 
     if (likes && likes % 3 === 0) {
       try {
