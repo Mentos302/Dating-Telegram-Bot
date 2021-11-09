@@ -68,7 +68,7 @@ class SwiperController {
 
           likes++
 
-          if (!(session.daily_likes! % 5) && ctx.from) {
+          if (!(likes! % 5) && ctx.from) {
             await UserService.updateDailyLikes(ctx.from?.id, likes)
           }
 
