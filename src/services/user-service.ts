@@ -5,7 +5,7 @@ const { User } = db
 
 import RelationService from './relations-service'
 import ProfileService from './profile-service'
-import BotError from '../exceptions/error-notification'
+import BotError from '../exceptions/botError'
 
 class UserService {
   async getUser(chat_id: number) {

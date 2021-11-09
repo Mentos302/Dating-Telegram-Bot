@@ -21,8 +21,6 @@ class NavigationController {
   }
 
   async closeConfirmation(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.replyWithHTML(
       ctx.i18n.t('close.main'),
       Extra.markup((m: Markup<any>) =>
@@ -35,8 +33,6 @@ class NavigationController {
   }
 
   async closeProfile(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     await ProfileService.deleteProfile(ctx.from!.id)
     await RelationsService.deleteAllActivities(ctx.from!.id)
 
@@ -53,14 +49,10 @@ class NavigationController {
   }
 
   async toMainScene(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('swiper_main', { is_first: true })
   }
 
   async toProfileScene(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('profile_menu')
   }
 }

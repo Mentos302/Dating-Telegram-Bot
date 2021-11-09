@@ -45,7 +45,7 @@ class ProfileController {
         )
       )
     } catch (e: any) {
-      throw new BotError(`Unexpected error with profile sending`, e)
+      throw new Error(`Unexpected error with profile sending`)
     }
   }
 
@@ -97,26 +97,18 @@ class ProfileController {
   }
 
   async toRegAgain(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter(`reg2`)
   }
 
   async toChangeAvatar(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter(`editavatar`)
   }
 
   async toChangeDescript(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter(`editdescript`)
   }
 
   async toSwiper(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('swiper_main', { is_first: true })
   }
 

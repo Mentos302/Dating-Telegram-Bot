@@ -1,7 +1,6 @@
 import { Extra } from 'telegraf'
 import IProfile from '../interfaces/IProfile'
 import bot from '../../index'
-import BotError from './error-notification'
 
 export default async (profile: IProfile) => {
   try {
@@ -9,7 +8,7 @@ export default async (profile: IProfile) => {
 
     await bot.telegram.sendMessage(
       process.env.ADMIN_ID as string,
-      `<b>🚨 Увага профіль відключено через скарги: </b>ID <code>${profile.chat_id}</code>`,
+      `<b>🚨 Новий профіль в сервісі: </b>`,
       Extra.HTML()
     )
 

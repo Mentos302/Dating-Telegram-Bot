@@ -1,5 +1,5 @@
 import db from '../database'
-import BotError from '../exceptions/error-notification'
+import BotError from '../exceptions/botError'
 
 const { Relation } = db
 

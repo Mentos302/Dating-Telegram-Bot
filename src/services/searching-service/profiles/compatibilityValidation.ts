@@ -1,4 +1,4 @@
-import BotError from '../../../exceptions/error-notification'
+import BotError from '../../../exceptions/botError'
 import IProfile from '../../../interfaces/IProfile'
 
 export default (liker: IProfile, liked: IProfile): any => {

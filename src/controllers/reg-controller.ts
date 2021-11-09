@@ -17,7 +17,6 @@ class RegController {
   }
 
   async regStart(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
     ctx.scene.enter('reg2')
   }
 
@@ -46,12 +45,10 @@ class RegController {
   }
 
   async resGenderMale(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
     ctx.scene.enter('reg4', { ...ctx.scene.state, gender: 1 })
   }
 
   async resGenderFemale(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
     ctx.scene.enter('reg4', { ...ctx.scene.state, gender: 0 })
   }
 
@@ -69,8 +66,6 @@ class RegController {
   }
 
   async resSex(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     let sex
 
     switch (ctx.callbackQuery!.data) {
@@ -112,7 +107,7 @@ class RegController {
       relations: [],
     }
 
-    if (!ctx.session.searchingNow) DisplayController.getCandidates(ctx.session)
+    await DisplayController.getCandidates(ctx.session)
   }
 
   reqName({ replyWithHTML, i18n }: TelegrafContext) {
@@ -131,8 +126,6 @@ class RegController {
   }
 
   async resNameDefault(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('reg7', { ...ctx.scene.state, name: ctx.from?.first_name })
   }
 
@@ -146,8 +139,6 @@ class RegController {
   }
 
   async resDescSkip(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('reg8', { ...ctx.scene.state, descript: `` })
   }
 
@@ -220,8 +211,6 @@ class RegController {
   }
 
   async resConfirm(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     const { from, scene, session, callbackQuery } = ctx
 
     const userProfile = {

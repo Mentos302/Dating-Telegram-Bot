@@ -1,5 +1,5 @@
 import db from '../database'
-import BotError from '../exceptions/error-notification'
+import BotError from '../exceptions/botError'
 import reportNotification from '../exceptions/report-notification'
 
 import IAvatar from '../interfaces/IAvatar'
