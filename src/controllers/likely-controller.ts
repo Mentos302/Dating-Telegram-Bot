@@ -54,9 +54,9 @@ class LikelyContoroller {
 
   async report(ctx: TelegrafContext) {
     if (ctx.session.likely_candidates) {
-      const { chat_id, strikes } = ctx.session.likely_candidates[0]
+      const { chat_id } = ctx.session.likely_candidates[0]
 
-      ProfileService.reportProfile(chat_id, strikes)
+      ProfileService.reportProfile(ctx.session.likely_candidates[0])
 
       RelationsService.updateLikely(ctx.from!.id, chat_id)
 

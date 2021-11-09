@@ -90,7 +90,7 @@ class RegController {
 
     candidateAge && !isNaN(parseInt(candidateAge))
       ? ctx.scene.enter('reg5', { ...ctx.scene.state, candidateAge })
-      : ctx.reply(ctx.i18n.t('reg.age_error'), Extra.HTLM())
+      : ctx.reply(ctx.i18n.t('reg.age_error'), Extra.HTML())
   }
 
   reqCity(ctx: TelegrafContext) {

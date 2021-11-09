@@ -1,4 +1,5 @@
 import db from '../database'
+import reportNotification from '../exceptions/report-notification'
 import IAvatar from '../interfaces/IAvatar'
 import IProfile from '../interfaces/IProfile'
 
@@ -98,10 +99,14 @@ class ProfileService {
     }
   }
 
-  async reportProfile(chat_id: number, strikes: number) {
+  async reportProfile(profile: IProfile) {
+    let { chat_id, strikes } = profile
+
     try {
       if (strikes > 2) {
         await Profile.updateOne({ chat_id }, { is_active: false })
+
+        reportNotification(profile)
       } else {
         strikes++
         await Profile.updateOne({ chat_id }, { strikes })

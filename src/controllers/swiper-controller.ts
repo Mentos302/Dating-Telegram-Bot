@@ -93,15 +93,11 @@ class SwiperController {
 
   async report(ctx: TelegrafContext) {
     if (ctx.session.candidates) {
-      const { chat_id, strikes } = ctx.session.candidates[0]
+      const { chat_id } = ctx.session.candidates[0]
 
-      ProfileService.reportProfile(chat_id, strikes).catch((e) =>
-        console.log(e)
-      )
+      ProfileService.reportProfile(ctx.session.candidates[0])
 
-      RelationsService.newRelation(ctx.from!.id, chat_id, false).catch((e) => {
-        console.log(e)
-      })
+      RelationsService.newRelation(ctx.from!.id, chat_id, false)
 
       ctx.session.candidates.shift()
 
