@@ -3,6 +3,7 @@ import { TelegrafContext } from 'telegraf/typings/context'
 import DisplayController from './display-controller'
 import RelationsService from '../services/relations-service'
 import ProfileService from '../services/profile-service'
+import UserService from '../services/user-service'
 const Extra = require('telegraf/extra')
 
 class SwiperController {
@@ -11,11 +12,10 @@ class SwiperController {
   }
 
   async enter(ctx: TelegrafContext) {
-    if (ctx.session.candidates) {
-      const isOver = await DisplayController.showCandidates(
-        ctx,
-        ctx.session.candidates[0]
-      )
+    const candidates = ctx.session.candidates
+
+    if (candidates && candidates[0]) {
+      const isOver = await DisplayController.showCandidates(ctx, candidates[0])
 
       if (ctx.scene.state.is_first) {
         ctx.scene.state.is_first = false
@@ -27,9 +27,18 @@ class SwiperController {
         ctx.scene.enter('swiper_nav')
       }
     } else {
-      await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+      ctx.reply(ctx.i18n.t('action.delay'), Extra.HTML())
+      setTimeout(async () => {
+        if (ctx.session.candidates?.length) {
+          ctx.scene.state.is_first = true
 
-      ctx.scene.enter('swiper_nav')
+          ctx.scene.reenter()
+        } else {
+          await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+
+          ctx.scene.enter('swiper_nav')
+        }
+      }, 10000)
     }
   }
 
@@ -42,39 +51,53 @@ class SwiperController {
 
       let like: boolean = callbackQuery?.data === 'yes'
 
-      await RelationsService.newRelation(from!.id, chat_id, like)
-
-      if (like) {
-        this.sendLike(ctx, chat_id)
-      }
-
-      if (candidates.length) {
-        candidates.shift()
-      }
-
-      if (candidates.length) {
-        session.relations = session.relations || []
-
-        await DisplayController.showCandidates(ctx, candidates[0])
+      if (like && session.daily_likes! >= 15) {
+        await ctx.reply(
+          ctx.i18n.t('action.limit'),
+          Extra.HTML().markup((m: Markup<any>) =>
+            m.inlineKeyboard([
+              [m.callbackButton('📋 Запросити друзів', 'toRefferal')],
+              [m.callbackButton('↩️ Повернутись в меню', 'go_exit')],
+            ])
+          )
+        )
       } else {
-        await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+        if (like) {
+          session.daily_likes!++
 
-        ctx.scene.enter('swiper_nav')
+          if (!(session.daily_likes! % 5) && ctx.from) {
+            UserService.updateDailyLikes(ctx.from?.id, session.daily_likes!)
+          }
+
+          this.sendLike(ctx, chat_id)
+        }
+
+        await RelationsService.newRelation(from!.id, chat_id, like)
+
+        if (candidates.length) {
+          candidates.shift()
+        }
+
+        if (candidates.length) {
+          session.relations = session.relations || []
+
+          DisplayController.showCandidates(ctx, candidates[0])
+        } else {
+          await ctx.reply(ctx.i18n.t('action.over'), Extra.HTML())
+
+          ctx.scene.enter('swiper_nav')
+        }
       }
     }
   }
 
   async report(ctx: TelegrafContext) {
     if (ctx.session.candidates) {
-      const { chat_id, strikes } = ctx.session.candidates[0]
+      const { chat_id } = ctx.session.candidates[0]
 
-      ProfileService.reportProfile(chat_id, strikes).catch((e) =>
-        console.log(e)
-      )
+      ProfileService.reportProfile(ctx.session.candidates[0])
 
-      RelationsService.newRelation(ctx.from!.id, chat_id, false).catch((e) => {
-        console.log(e)
-      })
+      RelationsService.newRelation(ctx.from!.id, chat_id, false)
 
       ctx.session.candidates.shift()
 
@@ -108,8 +131,12 @@ class SwiperController {
     }
   }
 
-  toNavigation({ scene }: TelegrafContext) {
-    scene.enter('swiper_nav')
+  toRefferal(ctx: TelegrafContext) {
+    ctx.scene.enter('refferal')
+  }
+
+  toNavigation(ctx: TelegrafContext) {
+    ctx.scene.enter('swiper_nav')
   }
 }
 

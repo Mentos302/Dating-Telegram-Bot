@@ -6,7 +6,7 @@ export default (bot: any) => {
   const GreetingScene = require('./scenes/Registration/Greeting')()
   const AgeScene = require('./scenes/Registration/Age')()
   const GenderScene = require('./scenes/Registration/Gender')()
-  const SexScene = require('./scenes/Registration/Sex')()
+  const CandidateScene = require('./scenes/Registration/Candidate')()
   const CityScene = require('./scenes/Registration/City')()
   const NameScene = require('./scenes/Registration/Name')()
   const DescScene = require('./scenes/Registration/Desc')()
@@ -21,12 +21,14 @@ export default (bot: any) => {
   const ActionMenu = require('./scenes/Swiper/Menu')()
   const LikelyMain = require('./scenes/Likely/Display')()
 
+  const Refferal = require('./scenes/Profile/Refferal')()
+
   const stage = new Stage(
     [
       GreetingScene,
       AgeScene,
       GenderScene,
-      SexScene,
+      CandidateScene,
       CityScene,
       NameScene,
       DescScene,
@@ -38,6 +40,7 @@ export default (bot: any) => {
       ActionMain,
       ActionMenu,
       LikelyMain,
+      Refferal,
     ],
     {
       ttl: 120,

@@ -34,7 +34,7 @@ class LikelyContoroller {
 
       let like: boolean = callbackQuery?.data === 'yes'
 
-      RelationsService.updateLikely(from!.id, chat_id)
+      await RelationsService.updateLikely(chat_id, from!.id)
 
       session.relations.push(chat_id)
 
@@ -46,7 +46,7 @@ class LikelyContoroller {
         if (session.likely_candidates.length) {
           DisplayController.showCandidates(ctx, session.likely_candidates[0])
         } else {
-          ctx.scene.enter('swiper_main')
+          ctx.scene.enter('swiper_nav')
         }
       }
     }
@@ -54,11 +54,11 @@ class LikelyContoroller {
 
   async report(ctx: TelegrafContext) {
     if (ctx.session.likely_candidates) {
-      const { chat_id, strikes } = ctx.session.likely_candidates[0]
+      const { chat_id } = ctx.session.likely_candidates[0]
 
-      ProfileService.reportProfile(chat_id, strikes)
+      ProfileService.reportProfile(ctx.session.likely_candidates[0])
 
-      // RelationsService.updateLikely(from!.id, chat_id)
+      RelationsService.updateLikely(ctx.from!.id, chat_id)
 
       ctx.session.likely_candidates.shift()
 
@@ -109,15 +109,17 @@ class LikelyContoroller {
     const candidates = ctx.session.likely_candidates
     candidates?.shift()
 
+    ctx.scene.state.is_first = true
+
     if (candidates?.length) {
       DisplayController.showCandidates(ctx, candidates[0])
     } else {
-      ctx.scene.enter('swiper_main')
+      ctx.scene.enter('swiper_main', ctx.scene.state)
     }
   }
 
   toNavigation(ctx: TelegrafContext) {
-    ctx.scene.enter('action_menu')
+    ctx.scene.enter('swiper_menu')
   }
 }
 

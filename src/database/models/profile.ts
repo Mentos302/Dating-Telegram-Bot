@@ -26,7 +26,11 @@ const profileScheme = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    decsript: {
+    candidateAge: {
+      type: Number,
+      required: true,
+    },
+    descript: {
       type: String,
     },
     avatar: {
