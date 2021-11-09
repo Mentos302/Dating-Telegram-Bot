@@ -19,7 +19,7 @@ class DisplayController {
 
     const candidates = session.candidates || []
 
-    if (!likes && candidates.length < 10) {
+    if (!likes && candidates.length < 10 && !session.searchingNow) {
       this.getCandidates(session)
     }
 
@@ -43,9 +43,12 @@ class DisplayController {
   }
 
   async getCandidates(session: ISession) {
+    session.searchingNow = true
+
     try {
       const searching = await SearchCandidates(session)
 
+      session.searchingNow = false
       if (searching) {
         let { candidates, citiesCache } = searching
 

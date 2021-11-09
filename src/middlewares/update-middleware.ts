@@ -37,9 +37,8 @@ export default async (ctx: TelegrafContext) => {
             daily_likes: user.daily_likes,
           }
 
-          const penis = DisplayController.getCandidates(ctx.session)
-
-          console.log(penis)
+          if (!ctx.session.searchingNow)
+            DisplayController.getCandidates(ctx.session)
 
           const likes = await RelationService.checkNewLikes(ctx.from!.id)
 

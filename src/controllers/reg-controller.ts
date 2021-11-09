@@ -112,7 +112,7 @@ class RegController {
       relations: [],
     }
 
-    DisplayController.getCandidates(ctx.session)
+    if (!ctx.session.searchingNow) DisplayController.getCandidates(ctx.session)
   }
 
   reqName({ replyWithHTML, i18n }: TelegrafContext) {
