@@ -7,6 +7,7 @@ import I18n from 'telegraf-i18n'
 import sceneInitialisation from './stage'
 import { TelegrafContext } from 'telegraf/typings/context'
 import updateMiddleware from './middlewares/update-middleware'
+import errorNotification from './exceptions/error-notification'
 const rateLimit = require('telegraf-ratelimit')
 const session = require('telegraf/session')
 
@@ -14,10 +15,6 @@ export default () => {
   const app = express()
 
   const bot: any = new Telegraf(process.env.BOT_TOKEN as string)
-
-  bot.catch((error: Error) => {
-    console.log(error)
-  })
 
   const i18n = new I18n({
     directory: path.resolve(__dirname, 'locales'),
@@ -49,6 +46,8 @@ export default () => {
 
   bot.use(updateMiddleware)
 
+  bot.catch((error: Error) => errorNotification(bot, error))
+
   db.connection.once('open', async () => {
     console.log('Connected to MongoDB')
     app.use(bot.webhookCallback('/secreting'))
@@ -58,4 +57,6 @@ export default () => {
       console.log('Bot has been started ...')
     })
   })
+
+  return bot
 }

@@ -7,13 +7,13 @@ const Extra = require('telegraf/extra')
 
 class ProfileController {
   async sendProfile(ctx: TelegrafContext) {
-    const { name, age, city, decsript, avatar } = ctx.session.profile
+    const { name, age, city, descript, avatar } = ctx.session.profile
 
     if (avatar.is_video) {
       await ctx.replyWithVideo(
         `${avatar.file_id}`,
         Extra.HTML()
-          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${decsript}`)
+          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
           .markup((m: Markup<any>) => {
             m.resize()
           })
@@ -22,7 +22,7 @@ class ProfileController {
       await ctx.replyWithPhoto(
         `${avatar.file_id}`,
         Extra.HTML()
-          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${decsript}`)
+          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
           .markup((m: Markup<any>) => {
             m.resize()
           })
@@ -56,7 +56,7 @@ class ProfileController {
     if (ctx.from) {
       ProfileService.changeDesc(ctx.from?.id, description)
 
-      ctx.session.profile.decsript = description
+      ctx.session.profile.descript = description
       ctx.scene.enter('profile_menu')
     }
   }
