@@ -6,6 +6,8 @@ const Extra = require('telegraf/extra')
 
 class RefferalController {
   async enter(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     const refferals = await UserService.getUserRefBonus(ctx.from!.id)
 
     const quantity = refferals == 1 ? 'single' : 'multiple'
@@ -33,7 +35,9 @@ class RefferalController {
     )
   }
 
-  toNavigation(ctx: TelegrafContext) {
+  async toNavigation(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter('swiper_nav')
   }
 }

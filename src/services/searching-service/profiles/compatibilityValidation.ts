@@ -22,7 +22,7 @@ const interestValidation = (liker: IProfile, liked: IProfile): boolean => {
 const ageValidation = (liker: IProfile, liked: IProfile): boolean => {
   let limit
 
-  liker.age < 18 ? (limit = 5) : (limit = 3)
+  liker.age < 18 ? (limit = 3) : (limit = 5)
 
   if (liked.age < liker.candidateAge || liked.age - liker.candidateAge > limit)
     return false

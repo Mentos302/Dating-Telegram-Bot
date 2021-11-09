@@ -43,6 +43,7 @@ class SwiperController {
   }
 
   choose = async (ctx: TelegrafContext) => {
+    ctx.answerCbQuery()
     const { from, session, callbackQuery } = ctx
     const { candidates } = session
 
@@ -92,6 +93,8 @@ class SwiperController {
   }
 
   async report(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     if (ctx.session.candidates) {
       const { chat_id } = ctx.session.candidates[0]
 
@@ -131,11 +134,15 @@ class SwiperController {
     }
   }
 
-  toRefferal(ctx: TelegrafContext) {
+  async toRefferal(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter('refferal')
   }
 
-  toNavigation(ctx: TelegrafContext) {
+  async toNavigation(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter('swiper_nav')
   }
 }

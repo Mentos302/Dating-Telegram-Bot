@@ -91,19 +91,27 @@ class ProfileController {
     ctx.scene.enter('profile_menu')
   }
 
-  toRegAgain(ctx: TelegrafContext) {
+  async toRegAgain(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter(`reg2`)
   }
 
-  toChangeAvatar(ctx: TelegrafContext) {
+  async toChangeAvatar(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter(`editavatar`)
   }
 
-  toChangeDescript(ctx: TelegrafContext) {
+  async toChangeDescript(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter(`editdescript`)
   }
 
-  toSwiper(ctx: TelegrafContext) {
+  async toSwiper(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter('swiper_main', { is_first: true })
   }
 

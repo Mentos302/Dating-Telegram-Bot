@@ -7,17 +7,18 @@ import DisplayController from './display-controller'
 const Extra = require('telegraf/extra')
 
 class RegController {
-  greeting({ replyWithHTML, i18n }: TelegrafContext) {
-    replyWithHTML(
-      i18n.t('reg.greeting'),
+  async greeting(ctx: TelegrafContext) {
+    ctx.replyWithHTML(
+      ctx.i18n.t('reg.greeting'),
       Extra.markup((m: Markup<any>) =>
-        m.inlineKeyboard([m.callbackButton(i18n.t('yes'), 'okay')])
+        m.inlineKeyboard([m.callbackButton(ctx.i18n.t('yes'), 'okay')])
       )
     )
   }
 
-  regStart({ scene }: TelegrafContext) {
-    scene.enter('reg2')
+  async regStart(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+    ctx.scene.enter('reg2')
   }
 
   reqAge({ reply, i18n }: TelegrafContext) {
@@ -44,12 +45,14 @@ class RegController {
     )
   }
 
-  resGenderMale({ scene }: TelegrafContext) {
-    scene.enter('reg4', { ...scene.state, gender: 1 })
+  async resGenderMale(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+    ctx.scene.enter('reg4', { ...ctx.scene.state, gender: 1 })
   }
 
-  resGenderFemale({ scene }: TelegrafContext) {
-    scene.enter('reg4', { ...scene.state, gender: 0 })
+  async resGenderFemale(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+    ctx.scene.enter('reg4', { ...ctx.scene.state, gender: 0 })
   }
 
   reqSex({ replyWithHTML, i18n }: TelegrafContext) {
@@ -65,7 +68,9 @@ class RegController {
     )
   }
 
-  resSex(ctx: TelegrafContext) {
+  async resSex(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     let sex
 
     switch (ctx.callbackQuery!.data) {
@@ -125,8 +130,10 @@ class RegController {
     scene.enter('reg7', { ...scene.state, name: message?.text })
   }
 
-  resNameDefault({ from, scene }: TelegrafContext) {
-    scene.enter('reg7', { ...scene.state, name: from?.first_name })
+  async resNameDefault(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
+    ctx.scene.enter('reg7', { ...ctx.scene.state, name: ctx.from?.first_name })
   }
 
   reqDesc({ replyWithHTML, i18n }: TelegrafContext) {
@@ -138,8 +145,10 @@ class RegController {
     )
   }
 
-  resDescSkip({ scene }: TelegrafContext) {
-    scene.enter('reg8', { ...scene.state, descript: `` })
+  async resDescSkip(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
+    ctx.scene.enter('reg8', { ...ctx.scene.state, descript: `` })
   }
 
   resDesc({ message, scene }: TelegrafContext) {
@@ -211,6 +220,8 @@ class RegController {
   }
 
   async resConfirm(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     const { from, scene, session, callbackQuery } = ctx
 
     const userProfile = {
