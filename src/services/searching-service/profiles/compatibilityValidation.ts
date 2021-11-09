@@ -1,10 +1,15 @@
+import BotError from '../../../exceptions/error-notification'
 import IProfile from '../../../interfaces/IProfile'
 
 export default (liker: IProfile, liked: IProfile): any => {
-  if (interestValidation(liker, liked) && ageValidation(liker, liked)) {
-    return liked
-  } else {
-    return false
+  try {
+    if (interestValidation(liker, liked) && ageValidation(liker, liked)) {
+      return liked
+    } else {
+      return false
+    }
+  } catch (e: any) {
+    throw new BotError(`Unexpected error with compatibility validation`, e)
   }
 }
 

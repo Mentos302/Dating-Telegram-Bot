@@ -1,4 +1,5 @@
 import db from '../database'
+import BotError from '../exceptions/error-notification'
 
 const { Relation } = db
 
@@ -11,10 +12,8 @@ class RelationsService {
         host_like,
         cli_checked: false,
       })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexprected error with creating new relation`)
+    } catch (e: any) {
+      throw new BotError(`Unexprected error with creating new relation`, e)
     }
   }
 
@@ -30,10 +29,8 @@ class RelationsService {
       })
 
       return likedRelations
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexpected error with new likes checking`)
+    } catch (e: any) {
+      throw new BotError(`Unexpected error with new likes checking`, e)
     }
   }
 
@@ -68,30 +65,24 @@ class RelationsService {
       )
 
       return relations
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexprected error with getting user relations`)
+    } catch (e: any) {
+      throw new BotError(`Unexprected error with getting user relations`, e)
     }
   }
 
   async updateLikely(host_id: number, cli_id: number) {
     try {
       await Relation.updateOne({ host_id, cli_id }, { cli_checked: true })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexprected error with likely updating`)
+    } catch (e: any) {
+      throw new BotError(`Unexprected error with likely updating`, e)
     }
   }
 
   async deleteLikes(cli_id: number) {
     try {
       await Relation.deleteMany({ cli_id })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexpected error with likes deleting`)
+    } catch (e: any) {
+      throw new BotError(`Unexpected error with likes deleting`, e)
     }
   }
 
@@ -99,10 +90,8 @@ class RelationsService {
     try {
       await Relation.deleteMany({ host_id: cli_id })
       await Relation.deleteMany({ cli_id })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexpected error with activities deleting`)
+    } catch (e: any) {
+      throw new BotError(`Unexpected error with activities deleting`, e)
     }
   }
 }

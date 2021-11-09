@@ -67,10 +67,13 @@ class SwiperController {
           session.daily_likes!++
 
           if (!(session.daily_likes! % 5) && ctx.from) {
-            UserService.updateDailyLikes(ctx.from?.id, session.daily_likes!)
+            await UserService.updateDailyLikes(
+              ctx.from?.id,
+              session.daily_likes!
+            )
           }
 
-          this.sendLike(ctx, chat_id)
+          await this.sendLike(ctx, chat_id)
         }
 
         await RelationsService.newRelation(from!.id, chat_id, like)
@@ -98,9 +101,9 @@ class SwiperController {
     if (ctx.session.candidates) {
       const { chat_id } = ctx.session.candidates[0]
 
-      ProfileService.reportProfile(ctx.session.candidates[0])
+      await ProfileService.reportProfile(ctx.session.candidates[0])
 
-      RelationsService.newRelation(ctx.from!.id, chat_id, false)
+      await RelationsService.newRelation(ctx.from!.id, chat_id, false)
 
       ctx.session.candidates.shift()
 

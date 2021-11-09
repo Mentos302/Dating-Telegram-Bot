@@ -37,8 +37,8 @@ class NavigationController {
   async closeProfile(ctx: TelegrafContext) {
     await ctx.answerCbQuery()
 
-    ProfileService.deleteProfile(ctx.from!.id)
-    RelationsService.deleteAllActivities(ctx.from!.id)
+    await ProfileService.deleteProfile(ctx.from!.id)
+    await RelationsService.deleteAllActivities(ctx.from!.id)
 
     ctx.replyWithHTML(
       ctx.i18n.t('close.bye'),

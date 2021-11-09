@@ -60,9 +60,9 @@ class LikelyContoroller {
     if (ctx.session.likely_candidates) {
       const { chat_id } = ctx.session.likely_candidates[0]
 
-      ProfileService.reportProfile(ctx.session.likely_candidates[0])
+      await ProfileService.reportProfile(ctx.session.likely_candidates[0])
 
-      RelationsService.updateLikely(ctx.from!.id, chat_id)
+      await RelationsService.updateLikely(ctx.from!.id, chat_id)
 
       ctx.session.likely_candidates.shift()
 

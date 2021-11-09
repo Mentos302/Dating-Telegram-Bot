@@ -1,5 +1,7 @@
 import db from '../database'
+import BotError from '../exceptions/error-notification'
 import reportNotification from '../exceptions/report-notification'
+
 import IAvatar from '../interfaces/IAvatar'
 import IProfile from '../interfaces/IProfile'
 
@@ -11,74 +13,42 @@ class ProfileService {
       const profile = Profile.findOne({ chat_id })
 
       return profile
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexpected error with profile getting`)
+    } catch (e: any) {
+      throw new BotError(`Unexpected error with profile getting`, e)
     }
   }
 
   async createProfile(data: IProfile) {
     try {
-      const {
-        chat_id,
-        age,
-        gender,
-        interest,
-        city,
-        name,
-        avatar,
-        descript,
-        candidateAge,
-      } = data
+      await Profile.create(data)
 
-      await Profile.create({
-        name,
-        chat_id,
-        gender,
-        interest,
-        city,
-        age,
-        descript,
-        avatar,
-        candidateAge,
-      })
-
-      await City.updateOne({ city_name: city }, { $inc: { profiles: 1 } })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Profile creating error`)
+      await City.updateOne({ city_name: data.city }, { $inc: { profiles: 1 } })
+    } catch (e: any) {
+      throw new BotError(`Profile creating error`, e)
     }
   }
 
   async deleteProfile(chat_id: number) {
     try {
       await Profile.deleteOne({ chat_id })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexpected error with profile deleting`)
+    } catch (e: any) {
+      throw new BotError(`Unexpected error with profile deleting`, e)
     }
   }
 
   async changeAvatar(chat_id: number, avatar: IAvatar) {
     try {
       await Profile.updateOne({ chat_id }, { avatar })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexprected error with avatar changing`)
+    } catch (e: any) {
+      throw new BotError(`Unexprected error with avatar changing`, e)
     }
   }
 
   async changeDesc(chat_id: number, decsript: string) {
     try {
       await Profile.updateOne({ chat_id }, { decsript })
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexprected error with desc changing`)
+    } catch (e: any) {
+      throw new BotError(`Unexprected error with desc changing`, e)
     }
   }
 
@@ -92,10 +62,8 @@ class ProfileService {
       await Profile.updateOne({ chat_id }, { $inc: { attraction: 1 } })
 
       return likes
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexprected error with user likes updating`)
+    } catch (e: any) {
+      throw new BotError(`Unexprected error with user likes updating`, e)
     }
   }
 
@@ -111,10 +79,8 @@ class ProfileService {
         strikes++
         await Profile.updateOne({ chat_id }, { strikes })
       }
-    } catch (e) {
-      console.log(e)
-
-      throw new Error(`Unexpected error with profile reporting`)
+    } catch (e: any) {
+      throw new BotError(`Unexpected error with profile reporting`, e)
     }
   }
 }

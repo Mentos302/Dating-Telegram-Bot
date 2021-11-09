@@ -3,7 +3,7 @@ import { TelegrafContext } from 'telegraf/typings/context'
 import IProfile from '../interfaces/IProfile'
 import ISession from '../interfaces/ISession'
 import SearchCandidates from '../services/searching-service'
-
+import BotError from '../exceptions/error-notification'
 const Extra = require('telegraf/extra')
 
 class DisplayController {
@@ -18,7 +18,6 @@ class DisplayController {
     let { is_first, likes } = scene.state
 
     const candidates = session.candidates || []
-    const citiesCache = session.citiesCache || []
 
     if (!likes && candidates.length < 10) {
       this.getCandidates(session)
@@ -44,26 +43,30 @@ class DisplayController {
   }
 
   async getCandidates(session: ISession) {
-    const searching = await SearchCandidates(session)
+    try {
+      const searching = await SearchCandidates(session)
 
-    if (searching) {
-      let { candidates, citiesCache } = searching
+      if (searching) {
+        let { candidates, citiesCache } = searching
 
-      if (!citiesCache.length) citiesCache = []
+        if (!citiesCache.length) citiesCache = []
 
-      session.city = citiesCache[0]
-      session.candidates = session.candidates
-        ? session.candidates.concat(candidates)
-        : candidates
-      session.citiesCache = citiesCache
+        session.city = citiesCache[0]
+        session.candidates = session.candidates
+          ? session.candidates.concat(candidates)
+          : candidates
+        session.citiesCache = citiesCache
 
-      candidates.forEach((e) => {
-        session.relations.push(e.chat_id)
-      })
+        candidates.forEach((e) => {
+          session.relations.push(e.chat_id)
+        })
 
-      if (session.candidates.length < 10) {
-        this.getCandidates(session).catch((e: Error) => console.log(e))
+        if (session.candidates.length < 10) {
+          this.getCandidates(session)
+        }
       }
+    } catch (error: any) {
+      error.notificate()
     }
   }
 

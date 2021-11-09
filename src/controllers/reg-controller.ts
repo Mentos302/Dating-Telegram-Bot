@@ -112,7 +112,7 @@ class RegController {
       relations: [],
     }
 
-    DisplayController.getCandidates(ctx.session).catch((e) => console.log(e))
+    DisplayController.getCandidates(ctx.session)
   }
 
   reqName({ replyWithHTML, i18n }: TelegrafContext) {

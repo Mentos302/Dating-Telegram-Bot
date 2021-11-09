@@ -8,15 +8,19 @@ export default async (
   city: string,
   relations?: number[]
 ): Promise<IProfile[]> => {
-  let profiles = await getProfilesByCity(liker.chat_id, city)
+  try {
+    let profiles = await getProfilesByCity(liker.chat_id, city)
 
-  if (relations?.length) {
-    profiles = await relationsFilter(profiles, relations)
+    if (relations?.length) {
+      profiles = await relationsFilter(profiles, relations)
+    }
+
+    const candidates: any[] = profiles.filter((e) =>
+      compatibilityValidation(liker, e)
+    )
+
+    return candidates
+  } catch (e) {
+    throw e
   }
-
-  const candidates: any[] = profiles.filter((e) =>
-    compatibilityValidation(liker, e)
-  )
-
-  return candidates
 }
