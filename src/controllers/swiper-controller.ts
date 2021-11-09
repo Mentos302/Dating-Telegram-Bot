@@ -95,7 +95,7 @@ class SwiperController {
   }
 
   async report(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
+    ctx.answerCbQuery()
 
     if (ctx.session.candidates) {
       const { chat_id } = ctx.session.candidates[0]
@@ -137,14 +137,10 @@ class SwiperController {
   }
 
   async toRefferal(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('refferal')
   }
 
   async toNavigation(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('swiper_nav')
   }
 }

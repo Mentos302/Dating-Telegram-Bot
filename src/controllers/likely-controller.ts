@@ -27,8 +27,6 @@ class LikelyContoroller {
   }
 
   choose = async (ctx: TelegrafContext) => {
-    await ctx.answerCbQuery()
-
     const { from, session, callbackQuery } = ctx
 
     if (session.likely_candidates) {
@@ -55,8 +53,6 @@ class LikelyContoroller {
   }
 
   async report(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     if (ctx.session.likely_candidates) {
       const { chat_id } = ctx.session.likely_candidates[0]
 
@@ -110,8 +106,6 @@ class LikelyContoroller {
   }
 
   async continue(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     const candidates = ctx.session.likely_candidates
     candidates?.shift()
 
@@ -125,8 +119,6 @@ class LikelyContoroller {
   }
 
   async toNavigation(ctx: TelegrafContext) {
-    await ctx.answerCbQuery()
-
     ctx.scene.enter('swiper_menu')
   }
 }

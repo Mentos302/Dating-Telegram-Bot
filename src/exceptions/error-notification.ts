@@ -1,24 +1,17 @@
 import { Extra } from 'telegraf'
 import bot from '../../index'
+import BotError from './botError'
 
-class BotError {
-  msg: string
-  error: Error
-
-  constructor(msg: string, error: Error) {
-    this.msg = msg
-    this.error = error
-  }
-
-  notificate() {
-    console.log(this.error)
+export default async (e: any) => {
+  if (e instanceof BotError) {
+    e.notificate()
+  } else {
+    console.log(e)
 
     bot.telegram.sendMessage(
       process.env.ADMIN_ID as string,
-      `<b>🚨 Увага нова помилка:</b>\n\n<code>${this.msg}\n\n${this.error}</code>`,
+      `<b>🚨 Увага нова помилка:</b>\n\n<code>${e}</code>`,
       Extra.HTML()
     )
   }
 }
-
-export default BotError

@@ -20,7 +20,7 @@ class DisplayController {
     const candidates = session.candidates || []
 
     if (!likes && candidates.length < 10 && !session.searchingNow) {
-      this.getCandidates(session)
+      await this.getCandidates(session)
     }
 
     if (profile && is_first) {
@@ -43,12 +43,9 @@ class DisplayController {
   }
 
   async getCandidates(session: ISession) {
-    session.searchingNow = true
-
     try {
       const searching = await SearchCandidates(session)
 
-      session.searchingNow = false
       if (searching) {
         let { candidates, citiesCache } = searching
 
@@ -65,11 +62,11 @@ class DisplayController {
         })
 
         if (session.candidates.length < 10) {
-          this.getCandidates(session)
+          await this.getCandidates(session)
         }
       }
-    } catch (error: any) {
-      error.notificate()
+    } catch (e: any) {
+      throw e
     }
   }
 

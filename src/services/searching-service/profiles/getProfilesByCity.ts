@@ -1,6 +1,6 @@
 import db from '../../../database'
 import IProfile from '../../../interfaces/IProfile'
-import BotError from '../../../exceptions/error-notification'
+import BotError from '../../../exceptions/botError'
 
 const { Profile } = db
 

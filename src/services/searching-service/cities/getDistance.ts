@@ -1,7 +1,7 @@
 import ICity from '../../../interfaces/ICIty'
 import { getDistance } from 'geolib'
 import db from '../../../database'
-import BotError from '../../../exceptions/error-notification'
+import BotError from '../../../exceptions/botError'
 
 const { City } = db
 

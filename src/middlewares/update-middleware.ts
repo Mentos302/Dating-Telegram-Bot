@@ -5,11 +5,10 @@ import UserService from '../services/user-service'
 import IProfile from '../interfaces/IProfile'
 import IUser from '../interfaces/IUser'
 import DisplayController from '../controllers/display-controller'
+import BotError from '../exceptions/error-notification'
 
 export default async (ctx: TelegrafContext) => {
   try {
-    if (ctx.updateType == 'callback_query') await ctx.answerCbQuery()
-
     if (ctx.from) {
       const user: IUser = await UserService.getUser(ctx.from!.id)
 
@@ -37,8 +36,7 @@ export default async (ctx: TelegrafContext) => {
             daily_likes: user.daily_likes,
           }
 
-          if (!ctx.session.searchingNow)
-            DisplayController.getCandidates(ctx.session)
+          await DisplayController.getCandidates(ctx.session)
 
           const likes = await RelationService.checkNewLikes(ctx.from!.id)
 
@@ -63,7 +61,7 @@ export default async (ctx: TelegrafContext) => {
       }
     }
   } catch (e) {
-    ctx.reply(`⚙️ Шось пішло не так, спробуй ще раз трохи пізніше.`)
+    ctx.reply('⚙️ Щось пішло не так, спробуй ще раз трохи пізніше')
 
     throw e
   }

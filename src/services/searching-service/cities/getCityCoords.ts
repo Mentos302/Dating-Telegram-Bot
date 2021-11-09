@@ -1,7 +1,7 @@
 import cyrillicToTranslit from 'cyrillic-to-translit-js'
 import ICity from '../../../interfaces/ICIty'
 import db from '../../../database'
-import BotError from '../../../exceptions/error-notification'
+import BotError from '../../../exceptions/botError'
 
 const fetch = require('node-fetch')
 

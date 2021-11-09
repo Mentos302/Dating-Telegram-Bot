@@ -1,21 +1,15 @@
 import path from 'path'
-import ngrok from 'ngrok'
 import db from './database'
-import express from 'express'
 import Telegraf from 'telegraf'
 import I18n from 'telegraf-i18n'
 import sceneInitialisation from './stage'
 import { TelegrafContext } from 'telegraf/typings/context'
 import updateMiddleware from './middlewares/update-middleware'
 import errorNotification from './exceptions/error-notification'
-import { ApiError } from 'typegram'
-import BotError from './exceptions/error-notification'
 const rateLimit = require('telegraf-ratelimit')
 const session = require('telegraf/session')
 
 export default () => {
-  const app = express()
-
   const bot: any = new Telegraf(process.env.BOT_TOKEN as string)
 
   const i18n = new I18n({
@@ -33,8 +27,6 @@ export default () => {
       window: 1000,
       limit: 1,
       onLimitExceeded: (ctx: TelegrafContext) => {
-        if (ctx.updateType == 'callback_query') ctx.answerCbQuery()
-
         ctx.reply('Спокійніше, бо я не встигаю 😤')
       },
     })
@@ -52,16 +44,12 @@ export default () => {
 
   bot.use(updateMiddleware)
 
-  bot.catch((error: BotError) => error.notificate())
+  bot.catch(errorNotification)
 
   db.connection.once('open', async () => {
     console.log('Connected to MongoDB')
-    app.use(bot.webhookCallback('/secreting'))
-    bot.telegram.setWebhook(`${await ngrok.connect(8443)}/secreting`)
-
-    app.listen(8443, () => {
-      console.log('Bot has been started ...')
-    })
+    bot.launch()
+    console.log(`Bot has been started`)
   })
 
   return bot
