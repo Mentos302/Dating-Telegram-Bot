@@ -43,6 +43,7 @@ class SwiperController {
   }
 
   choose = async (ctx: TelegrafContext) => {
+    ctx.answerCbQuery()
     const { from, session, callbackQuery } = ctx
     const { candidates } = session
 
@@ -63,13 +64,15 @@ class SwiperController {
         )
       } else {
         if (like) {
-          session.daily_likes!++
+          let likes = session.daily_likes ? session.daily_likes : 0
 
-          if (!(session.daily_likes! % 5) && ctx.from) {
-            UserService.updateDailyLikes(ctx.from?.id, session.daily_likes!)
+          likes++
+
+          if (!(likes! % 5) && ctx.from) {
+            await UserService.updateDailyLikes(ctx.from?.id, likes)
           }
 
-          this.sendLike(ctx, chat_id)
+          await this.sendLike(ctx, chat_id)
         }
 
         await RelationsService.newRelation(from!.id, chat_id, like)
@@ -92,12 +95,14 @@ class SwiperController {
   }
 
   async report(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     if (ctx.session.candidates) {
       const { chat_id } = ctx.session.candidates[0]
 
-      ProfileService.reportProfile(ctx.session.candidates[0])
+      await ProfileService.reportProfile(ctx.session.candidates[0])
 
-      RelationsService.newRelation(ctx.from!.id, chat_id, false)
+      await RelationsService.newRelation(ctx.from!.id, chat_id, false)
 
       ctx.session.candidates.shift()
 
@@ -106,7 +111,7 @@ class SwiperController {
   }
 
   async sendLike({ telegram, i18n }: TelegrafContext, chat_id: number) {
-    const likes = await ProfileService.updateUserLikes(chat_id)
+    const likes = await ProfileService.updateProfileLikes(chat_id)
 
     if (likes && likes % 3 === 0) {
       try {
@@ -131,11 +136,15 @@ class SwiperController {
     }
   }
 
-  toRefferal(ctx: TelegrafContext) {
+  async toRefferal(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter('refferal')
   }
 
-  toNavigation(ctx: TelegrafContext) {
+  async toNavigation(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter('swiper_nav')
   }
 }

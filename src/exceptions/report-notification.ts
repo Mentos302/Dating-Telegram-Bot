@@ -1,6 +1,7 @@
 import { Extra } from 'telegraf'
 import IProfile from '../interfaces/IProfile'
 import bot from '../../index'
+import BotError from './error-notification'
 
 export default async (profile: IProfile) => {
   try {
@@ -27,7 +28,7 @@ export default async (profile: IProfile) => {
             `<b>${name}, ${age}</b>. ${city} \n\n${descript}`
           ).HTML() as any
         )
-  } catch (e) {
-    console.log(e)
+  } catch (e: any) {
+    throw new BotError(`Unexpected error with report baned sending`, e)
   }
 }

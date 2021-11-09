@@ -62,7 +62,7 @@ const searchCandidates = async ({
       return result
     }
   } catch (e) {
-    console.log(e)
+    throw e
   }
 }
 

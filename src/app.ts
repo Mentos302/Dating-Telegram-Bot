@@ -8,6 +8,8 @@ import sceneInitialisation from './stage'
 import { TelegrafContext } from 'telegraf/typings/context'
 import updateMiddleware from './middlewares/update-middleware'
 import errorNotification from './exceptions/error-notification'
+import { ApiError } from 'typegram'
+import BotError from './exceptions/error-notification'
 const rateLimit = require('telegraf-ratelimit')
 const session = require('telegraf/session')
 
@@ -30,10 +32,14 @@ export default () => {
     rateLimit({
       window: 1000,
       limit: 1,
-      onLimitExceeded: (ctx: TelegrafContext) =>
-        ctx.reply('Спокійніше, бо я не встигаю 😤'),
+      onLimitExceeded: (ctx: TelegrafContext) => {
+        if (ctx.updateType == 'callback_query') ctx.answerCbQuery()
+
+        ctx.reply('Спокійніше, бо я не встигаю 😤')
+      },
     })
   )
+
   bot.use(
     session({
       getSessionKey: (ctx: TelegrafContext) =>
@@ -46,7 +52,7 @@ export default () => {
 
   bot.use(updateMiddleware)
 
-  bot.catch((error: Error) => errorNotification(bot, error))
+  bot.catch((error: BotError) => error.notificate())
 
   db.connection.once('open', async () => {
     console.log('Connected to MongoDB')

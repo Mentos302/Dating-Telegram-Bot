@@ -1,28 +1,13 @@
 import ICity from '../../../interfaces/ICIty'
 import { getDistance } from 'geolib'
 import db from '../../../database'
+import BotError from '../../../exceptions/error-notification'
 
 const { City } = db
 
 type cityDistance = {
   pointName: string
   distance: number
-}
-
-export default async (from: ICity, to: ICity): Promise<number> => {
-  const { cached_distances } = from
-
-  if (cached_distances?.length) {
-    const data: cityDistance | undefined = cached_distances.find(
-      (e) => e.pointName === to.name
-    )
-
-    if (data) return data.distance
-  }
-
-  const distance = await calculateDistance(from, to)
-
-  return distance
 }
 
 const calculateDistance = async (from: ICity, to: ICity): Promise<number> => {
@@ -49,4 +34,24 @@ const calculateDistance = async (from: ICity, to: ICity): Promise<number> => {
   }
 
   return distance
+}
+
+export default async (from: ICity, to: ICity): Promise<number> => {
+  try {
+    const { cached_distances } = from
+
+    if (cached_distances?.length) {
+      const data: cityDistance | undefined = cached_distances.find(
+        (e) => e.pointName === to.name
+      )
+
+      if (data) return data.distance
+    }
+
+    const distance = await calculateDistance(from, to)
+
+    return distance
+  } catch (e: any) {
+    throw new BotError(`Unexpected error with distance calculating`, e)
+  }
 }

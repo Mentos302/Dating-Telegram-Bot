@@ -1,6 +1,7 @@
 import cyrillicToTranslit from 'cyrillic-to-translit-js'
 import ICity from '../../../interfaces/ICIty'
 import db from '../../../database'
+import BotError from '../../../exceptions/error-notification'
 
 const fetch = require('node-fetch')
 
@@ -30,9 +31,7 @@ export default async (name: string): Promise<ICity | undefined> => {
 
       return city
     }
-  } catch (e) {
-    console.log(e)
-
-    throw new Error(`Unexpected error with city coords getting`)
+  } catch (e: any) {
+    throw new BotError(`Unexpected error with city coords getting`, e)
   }
 }

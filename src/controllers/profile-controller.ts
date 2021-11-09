@@ -1,5 +1,6 @@
 import Telegraf, { Markup } from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
+import BotError from '../exceptions/error-notification'
 import IProfile from '../interfaces/IProfile'
 import ProfileService from '../services/profile-service'
 import RelationsService from '../services/relations-service'
@@ -7,41 +8,45 @@ const Extra = require('telegraf/extra')
 
 class ProfileController {
   async sendProfile(ctx: TelegrafContext) {
-    const { name, age, city, descript, avatar } = ctx.session.profile
+    try {
+      const { name, age, city, descript, avatar } = ctx.session.profile
 
-    if (avatar.is_video) {
-      await ctx.replyWithVideo(
-        `${avatar.file_id}`,
-        Extra.HTML()
-          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
-          .markup((m: Markup<any>) => {
-            m.resize()
-          })
+      if (avatar.is_video) {
+        await ctx.replyWithVideo(
+          `${avatar.file_id}`,
+          Extra.HTML()
+            .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
+            .markup((m: Markup<any>) => {
+              m.resize()
+            })
+        )
+      } else {
+        await ctx.replyWithPhoto(
+          `${avatar.file_id}`,
+          Extra.HTML()
+            .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
+            .markup((m: Markup<any>) => {
+              m.resize()
+            })
+        )
+      }
+
+      ctx.replyWithHTML(
+        ctx.i18n.t('profile.main'),
+        Extra.HTML().markup((m: Markup<any>) =>
+          m.inlineKeyboard([
+            [
+              m.callbackButton('📋', 'prof_menu1'),
+              m.callbackButton('📸 ', 'prof_menu2'),
+              m.callbackButton('📝', 'prof_menu3'),
+            ],
+            [m.callbackButton(ctx.i18n.t('profile.goon'), 'prof_menu4')],
+          ])
+        )
       )
-    } else {
-      await ctx.replyWithPhoto(
-        `${avatar.file_id}`,
-        Extra.HTML()
-          .caption(`<b>${name}, ${age}</b>. ${city} \n\n${descript}`)
-          .markup((m: Markup<any>) => {
-            m.resize()
-          })
-      )
+    } catch (e: any) {
+      throw new BotError(`Unexpected error with profile sending`, e)
     }
-
-    ctx.replyWithHTML(
-      ctx.i18n.t('profile.main'),
-      Extra.HTML().markup((m: Markup<any>) =>
-        m.inlineKeyboard([
-          [
-            m.callbackButton('📋', 'prof_menu1'),
-            m.callbackButton('📸 ', 'prof_menu2'),
-            m.callbackButton('📝', 'prof_menu3'),
-          ],
-          [m.callbackButton(ctx.i18n.t('profile.goon'), 'prof_menu4')],
-        ])
-      )
-    )
   }
 
   async regAgain(ctx: TelegrafContext) {
@@ -54,7 +59,7 @@ class ProfileController {
     const description = ctx.message!.text.replace(/\./g, ' ').replace(/@/g, ' ')
 
     if (ctx.from) {
-      ProfileService.changeDesc(ctx.from?.id, description)
+      await ProfileService.changeDesc(ctx.from?.id, description)
 
       ctx.session.profile.descript = description
       ctx.scene.enter('profile_menu')
@@ -67,9 +72,9 @@ class ProfileController {
       file_id: ctx.message!.photo[0].file_id,
     }
 
-    ProfileService.changeAvatar(ctx.from!.id, avatar)
+    await ProfileService.changeAvatar(ctx.from!.id, avatar)
 
-    RelationsService.deleteLikes(ctx.from!.id)
+    await RelationsService.deleteLikes(ctx.from!.id)
 
     ctx.session.profile.avatar = avatar
 
@@ -82,28 +87,36 @@ class ProfileController {
       file_id: ctx.message!.video.file_id,
     }
 
-    ProfileService.changeAvatar(ctx.from!.id, avatar)
+    await ProfileService.changeAvatar(ctx.from!.id, avatar)
 
-    RelationsService.deleteLikes(ctx.from!.id)
+    await RelationsService.deleteLikes(ctx.from!.id)
 
     ctx.session.profile.avatar = avatar
 
     ctx.scene.enter('profile_menu')
   }
 
-  toRegAgain(ctx: TelegrafContext) {
+  async toRegAgain(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter(`reg2`)
   }
 
-  toChangeAvatar(ctx: TelegrafContext) {
+  async toChangeAvatar(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter(`editavatar`)
   }
 
-  toChangeDescript(ctx: TelegrafContext) {
+  async toChangeDescript(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter(`editdescript`)
   }
 
-  toSwiper(ctx: TelegrafContext) {
+  async toSwiper(ctx: TelegrafContext) {
+    await ctx.answerCbQuery()
+
     ctx.scene.enter('swiper_main', { is_first: true })
   }
 

@@ -8,6 +8,7 @@ interface ISession {
   candidates?: IProfile[]
   likely_candidates?: IProfile[]
   daily_likes?: number
+  searchingNow?: boolean
 }
 
 export default ISession

@@ -1,14 +1,24 @@
 import { Extra } from 'telegraf'
-import { TelegrafContext } from 'telegraf/typings/context'
+import bot from '../../index'
 
-export default (bot: TelegrafContext, error: Error) => {
-  console.log(error)
+class BotError {
+  msg: string
+  error: Error
 
-  const errorMsg: string = JSON.stringify(error)
+  constructor(msg: string, error: Error) {
+    this.msg = msg
+    this.error = error
+  }
 
-  bot.telegram.sendMessage(
-    process.env.ADMIN_ID as string,
-    `<b>🚨 Увага нова помилка:</b>\n\n<code>${errorMsg}</code>`,
-    Extra.HTML()
-  )
+  notificate() {
+    console.log(this.error)
+
+    bot.telegram.sendMessage(
+      process.env.ADMIN_ID as string,
+      `<b>🚨 Увага нова помилка:</b>\n\n<code>${this.msg}\n\n${this.error}</code>`,
+      Extra.HTML()
+    )
+  }
 }
+
+export default BotError
