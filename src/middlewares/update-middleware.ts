@@ -5,7 +5,6 @@ import UserService from '../services/user-service'
 import IProfile from '../interfaces/IProfile'
 import IUser from '../interfaces/IUser'
 import DisplayController from '../controllers/display-controller'
-import BotError from '../exceptions/error-notification'
 
 export default async (ctx: TelegrafContext) => {
   try {

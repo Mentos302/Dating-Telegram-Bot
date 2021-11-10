@@ -165,7 +165,7 @@ class RegController {
     scene.enter('reg9', {
       ...scene.state,
       avatar: {
-        file_id: message?.photo[0].file_id,
+        file_id: message?.video.file_id,
         is_video: true,
       },
     })
