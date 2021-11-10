@@ -30,14 +30,19 @@ exports.default = (name) => __awaiter(void 0, void 0, void 0, function* () {
                 `&key=${process.env.GOOGLE_MAPS_KEY}`;
             let response = yield fetch(nameURL);
             let commits = yield response.json();
-            let coord = commits.results[0].geometry.location;
-            const city = {
-                name,
-                lat: coord.lat,
-                lng: coord.lng,
-            };
-            yield City.create(city);
-            return city;
+            if (commits.results[0]) {
+                const { lat, lng } = commits.results[0].geometry.location;
+                const city = {
+                    name,
+                    lat,
+                    lng,
+                };
+                yield City.create(city);
+                return city;
+            }
+            else {
+                throw new Error('City not found');
+            }
         }
     }
     catch (e) {

@@ -135,7 +135,7 @@ class RegController {
     }
     resAvatarVideo({ message, scene }) {
         scene.enter('reg9', Object.assign(Object.assign({}, scene.state), { avatar: {
-                file_id: message === null || message === void 0 ? void 0 : message.photo[0].file_id,
+                file_id: message === null || message === void 0 ? void 0 : message.video.file_id,
                 is_video: true,
             } }));
     }

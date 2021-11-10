@@ -19,8 +19,9 @@ const Extra = require('telegraf/extra');
 class LikelyContoroller {
     constructor() {
         this.choose = (ctx) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const { from, session, callbackQuery } = ctx;
-            if (session.likely_candidates) {
+            if ((_a = session.likely_candidates) === null || _a === void 0 ? void 0 : _a.length) {
                 const { chat_id } = session.likely_candidates[0];
                 let like = (callbackQuery === null || callbackQuery === void 0 ? void 0 : callbackQuery.data) === 'yes';
                 yield relations_service_1.default.updateLikely(chat_id, from.id);
@@ -37,6 +38,9 @@ class LikelyContoroller {
                         ctx.scene.enter('swiper_nav');
                     }
                 }
+            }
+            else {
+                ctx.scene.enter('swiper_nav');
             }
         });
         this.matchHandler = this.matchHandler.bind(this);
@@ -103,7 +107,7 @@ class LikelyContoroller {
     }
     toNavigation(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            ctx.scene.enter('swiper_menu');
+            ctx.scene.enter('swiper_nav');
         });
     }
 }
