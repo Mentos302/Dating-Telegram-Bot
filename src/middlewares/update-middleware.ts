@@ -5,6 +5,7 @@ import UserService from '../services/user-service'
 import IProfile from '../interfaces/IProfile'
 import IUser from '../interfaces/IUser'
 import DisplayController from '../controllers/display-controller'
+import errorNotification from '../exceptions/error-notification'
 
 export default async (ctx: TelegrafContext) => {
   try {
@@ -35,7 +36,9 @@ export default async (ctx: TelegrafContext) => {
             daily_likes: user.daily_likes,
           }
 
-          await DisplayController.getCandidates(ctx.session)
+          DisplayController.getCandidates(ctx.session).catch((e) =>
+            errorNotification(e)
+          )
 
           const likes = await RelationService.checkNewLikes(ctx.from!.id)
 

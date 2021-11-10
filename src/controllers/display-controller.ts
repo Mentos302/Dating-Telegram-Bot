@@ -4,6 +4,7 @@ import IProfile from '../interfaces/IProfile'
 import ISession from '../interfaces/ISession'
 import SearchCandidates from '../services/searching-service'
 import BotError from '../exceptions/error-notification'
+import errorNotification from '../exceptions/error-notification'
 const Extra = require('telegraf/extra')
 
 class DisplayController {
@@ -20,7 +21,7 @@ class DisplayController {
     const candidates = session.candidates || []
 
     if (!likes && candidates.length < 10 && !session.searchingNow) {
-      await this.getCandidates(session)
+      this.getCandidates(session).catch((e) => errorNotification(e))
     }
 
     if (profile && is_first) {
@@ -43,30 +44,29 @@ class DisplayController {
   }
 
   async getCandidates(session: ISession) {
-    try {
-      const searching = await SearchCandidates(session)
+    session.searchingNow = true
 
-      if (searching) {
-        let { candidates, citiesCache } = searching
+    const searching = await SearchCandidates(session)
 
-        if (!citiesCache.length) citiesCache = []
+    if (searching) {
+      session.searchingNow = false
+      let { candidates, citiesCache } = searching
 
-        session.city = citiesCache[0]
-        session.candidates = session.candidates
-          ? session.candidates.concat(candidates)
-          : candidates
-        session.citiesCache = citiesCache
+      if (!citiesCache.length) citiesCache = []
 
-        candidates.forEach((e) => {
-          session.relations.push(e.chat_id)
-        })
+      session.city = citiesCache[0]
+      session.candidates = session.candidates
+        ? session.candidates.concat(candidates)
+        : candidates
+      session.citiesCache = citiesCache
 
-        if (session.candidates.length < 10) {
-          await this.getCandidates(session)
-        }
+      candidates.forEach((e) => {
+        session.relations.push(e.chat_id)
+      })
+
+      if (session.candidates.length < 10) {
+        this.getCandidates(session).catch((e) => errorNotification(e))
       }
-    } catch (e: any) {
-      throw e
     }
   }
 

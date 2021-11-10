@@ -18,8 +18,7 @@ class LikelyContoroller {
 
     for (const like of scene.state.likes) {
       const profile: IProfile = await ProfileService.getProfile(like.host_id)
-
-      session.likely_candidates.push(profile)
+      if (profile) session.likely_candidates.push(profile)
     }
 
     if (session.likely_candidates)

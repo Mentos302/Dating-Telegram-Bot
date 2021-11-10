@@ -11,9 +11,7 @@ class BotError {
   }
 
   notificate() {
-    // console.log(this.error)
-
-    console.log(`pnes`)
+    console.log(this.error)
 
     bot.telegram.sendMessage(
       process.env.ADMIN_ID as string,

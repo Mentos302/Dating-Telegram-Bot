@@ -1,5 +1,6 @@
 import { Markup } from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
+import errorNotification from '../exceptions/error-notification'
 
 import ProfileService from '../services/profile-service'
 import DisplayController from './display-controller'
@@ -107,7 +108,9 @@ class RegController {
       relations: [],
     }
 
-    await DisplayController.getCandidates(ctx.session)
+    DisplayController.getCandidates(ctx.session).catch((e) =>
+      errorNotification(e)
+    )
   }
 
   reqName({ replyWithHTML, i18n }: TelegrafContext) {
