@@ -121,7 +121,7 @@ class LikelyContoroller {
   }
 
   async toNavigation(ctx: TelegrafContext) {
-    ctx.scene.enter('swiper_menu')
+    ctx.scene.enter('swiper_nav')
   }
 }
 
