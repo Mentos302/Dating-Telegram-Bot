@@ -29,7 +29,7 @@ class LikelyContoroller {
   choose = async (ctx: TelegrafContext) => {
     const { from, session, callbackQuery } = ctx
 
-    if (session.likely_candidates) {
+    if (session.likely_candidates?.length) {
       const { chat_id } = session.likely_candidates[0]
 
       let like: boolean = callbackQuery?.data === 'yes'
@@ -49,6 +49,8 @@ class LikelyContoroller {
           ctx.scene.enter('swiper_nav')
         }
       }
+    } else {
+      ctx.scene.enter('swiper_nav')
     }
   }
 
