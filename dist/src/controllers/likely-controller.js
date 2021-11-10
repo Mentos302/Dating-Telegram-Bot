@@ -51,7 +51,8 @@ class LikelyContoroller {
             session.likely_candidates = [];
             for (const like of scene.state.likes) {
                 const profile = yield profile_service_1.default.getProfile(like.host_id);
-                session.likely_candidates.push(profile);
+                if (profile)
+                    session.likely_candidates.push(profile);
             }
             if (session.likely_candidates)
                 display_controller_1.default.showCandidates(ctx, session.likely_candidates[0]);

@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const searching_service_1 = __importDefault(require("../services/searching-service"));
+const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
 const Extra = require('telegraf/extra');
 class DisplayController {
     constructor() {
@@ -25,7 +26,7 @@ class DisplayController {
             let { is_first, likes } = scene.state;
             const candidates = session.candidates || [];
             if (!likes && candidates.length < 10 && !session.searchingNow) {
-                yield this.getCandidates(session);
+                this.getCandidates(session).catch((e) => (0, error_notification_1.default)(e));
             }
             if (profile && is_first) {
                 profile.avatar.is_video
@@ -43,27 +44,24 @@ class DisplayController {
     }
     getCandidates(session) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const searching = yield (0, searching_service_1.default)(session);
-                if (searching) {
-                    let { candidates, citiesCache } = searching;
-                    if (!citiesCache.length)
-                        citiesCache = [];
-                    session.city = citiesCache[0];
-                    session.candidates = session.candidates
-                        ? session.candidates.concat(candidates)
-                        : candidates;
-                    session.citiesCache = citiesCache;
-                    candidates.forEach((e) => {
-                        session.relations.push(e.chat_id);
-                    });
-                    if (session.candidates.length < 10) {
-                        yield this.getCandidates(session);
-                    }
+            session.searchingNow = true;
+            const searching = yield (0, searching_service_1.default)(session);
+            if (searching) {
+                session.searchingNow = false;
+                let { candidates, citiesCache } = searching;
+                if (!citiesCache.length)
+                    citiesCache = [];
+                session.city = citiesCache[0];
+                session.candidates = session.candidates
+                    ? session.candidates.concat(candidates)
+                    : candidates;
+                session.citiesCache = citiesCache;
+                candidates.forEach((e) => {
+                    session.relations.push(e.chat_id);
+                });
+                if (session.candidates.length < 10) {
+                    this.getCandidates(session).catch((e) => (0, error_notification_1.default)(e));
                 }
-            }
-            catch (e) {
-                throw e;
             }
         });
     }

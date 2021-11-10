@@ -11,8 +11,7 @@ class BotError {
         this.error = error;
     }
     notificate() {
-        // console.log(this.error)
-        console.log(`pnes`);
+        console.log(this.error);
         index_1.default.telegram.sendMessage(process.env.ADMIN_ID, `<b>🚨 Увага нова помилка:</b>\n\n<code>${this.msg}\n\n${this.error}</code>`, telegraf_1.Extra.HTML());
     }
 }

@@ -16,6 +16,7 @@ const relations_service_1 = __importDefault(require("../services/relations-servi
 const profile_service_1 = __importDefault(require("../services/profile-service"));
 const user_service_1 = __importDefault(require("../services/user-service"));
 const display_controller_1 = __importDefault(require("../controllers/display-controller"));
+const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
 exports.default = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (ctx.from) {
@@ -36,7 +37,7 @@ exports.default = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                         relations: (yield relations_service_1.default.getUserRelations(ctx.from.id)) || [],
                         daily_likes: user.daily_likes,
                     };
-                    yield display_controller_1.default.getCandidates(ctx.session);
+                    display_controller_1.default.getCandidates(ctx.session).catch((e) => (0, error_notification_1.default)(e));
                     const likes = yield relations_service_1.default.checkNewLikes(ctx.from.id);
                     likes && likes.length
                         ? ctx.scene.enter('likely', { is_first: true, likes })

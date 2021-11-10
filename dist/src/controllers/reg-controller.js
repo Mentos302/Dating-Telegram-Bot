@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const error_notification_1 = __importDefault(require("../exceptions/error-notification"));
 const profile_service_1 = __importDefault(require("../services/profile-service"));
 const display_controller_1 = __importDefault(require("./display-controller"));
 const Extra = require('telegraf/extra');
@@ -96,7 +97,7 @@ class RegController {
                 citiesCache: [],
                 relations: [],
             };
-            yield display_controller_1.default.getCandidates(ctx.session);
+            display_controller_1.default.getCandidates(ctx.session).catch((e) => (0, error_notification_1.default)(e));
         });
     }
     reqName({ replyWithHTML, i18n }) {
