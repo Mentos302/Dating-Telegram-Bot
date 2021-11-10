@@ -21,15 +21,21 @@ export default async (name: string): Promise<ICity | undefined> => {
         `&key=${process.env.GOOGLE_MAPS_KEY}`
       let response = await fetch(nameURL)
       let commits: any | undefined = await response.json()
-      let coord = commits.results[0].geometry.location
-      const city: ICity = {
-        name,
-        lat: coord.lat,
-        lng: coord.lng,
-      }
-      await City.create(city)
+      if (commits.results[0]) {
+        const { lat, lng } = commits.results[0].geometry.location
 
-      return city
+        const city: ICity = {
+          name,
+          lat,
+          lng,
+        }
+
+        await City.create(city)
+
+        return city
+      } else {
+        throw new Error('City not found')
+      }
     }
   } catch (e: any) {
     throw new BotError(`Unexpected error with city coords getting`, e)
