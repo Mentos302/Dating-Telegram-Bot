@@ -22,6 +22,7 @@ exports.default = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         if (ctx.from) {
             const user = yield user_service_1.default.getUser(ctx.from.id);
             if (user) {
+                yield user_service_1.default.activityUpdate(ctx.from.id);
                 if (user.daily_likes &&
                     Math.floor(Date.now() / 1000) - user.last_activity > 86400) {
                     user.daily_likes = 0;
@@ -61,6 +62,6 @@ exports.default = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (e) {
         ctx.reply('⚙️ Щось пішло не так, спробуй ще раз трохи пізніше');
-        throw e;
+        // throw e
     }
 });

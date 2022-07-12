@@ -15,14 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../../../database"));
 const botError_1 = __importDefault(require("../../../exceptions/botError"));
 const { Profile } = database_1.default;
-exports.default = (chat_id, city) => __awaiter(void 0, void 0, void 0, function* () {
+exports.default = (chat_id, candidateAge) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let cityProfiles = yield Profile.find({
-            city,
+        let profiles = yield Profile.find({
+            candidateAge: { $gt: candidateAge - 1 },
             chat_id: { $ne: chat_id },
             is_active: true,
         });
-        return cityProfiles;
+        return profiles;
     }
     catch (e) {
         throw new botError_1.default(`Unexpected error with profiles getting by city`, e);

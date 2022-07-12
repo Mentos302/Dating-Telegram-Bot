@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const getProfilesByCity_1 = __importDefault(require("./getProfilesByCity"));
 const relationsFilter_1 = __importDefault(require("./relationsFilter"));
 const compatibilityValidation_1 = __importDefault(require("./compatibilityValidation"));
-exports.default = (liker, city, relations) => __awaiter(void 0, void 0, void 0, function* () {
+exports.default = (liker, relations) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let profiles = yield (0, getProfilesByCity_1.default)(liker.chat_id, city);
+        let profiles = yield (0, getProfilesByCity_1.default)(liker.chat_id, liker.candidateAge);
         if (relations === null || relations === void 0 ? void 0 : relations.length) {
             profiles = yield (0, relationsFilter_1.default)(profiles, relations);
         }

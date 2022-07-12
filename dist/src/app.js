@@ -34,7 +34,11 @@ exports.default = () => {
         window: 1000,
         limit: 1,
         onLimitExceeded: (ctx) => {
-            ctx.reply('Спокійніше, бо я не встигаю 😤');
+            // try {
+            //   ctx.reply('Спокійніше, бо я не встигаю 😤')
+            // } catch (error) {
+            //   console.log(error)
+            // }
         },
     }));
     bot.use(session({
@@ -42,6 +46,7 @@ exports.default = () => {
             `${ctx.from.id}:${(ctx.chat && ctx.chat.id) || ctx.from.id}`,
     }));
     (0, stage_1.default)(bot);
+    bot.command('sub_spam', (ctx) => ctx.scene.enter('admin_spam'));
     bot.use(update_middleware_1.default);
     bot.catch(error_notification_1.default);
     database_1.default.connection.once('open', () => __awaiter(void 0, void 0, void 0, function* () {

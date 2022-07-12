@@ -27,7 +27,7 @@ class SwiperController {
             if (candidates) {
                 const { chat_id } = candidates[0];
                 let like = (callbackQuery === null || callbackQuery === void 0 ? void 0 : callbackQuery.data) === 'yes';
-                if (like && session.daily_likes >= 15) {
+                if (like && session.daily_likes >= 100) {
                     yield ctx.reply(ctx.i18n.t('action.limit'), Extra.HTML().markup((m) => m.inlineKeyboard([
                         [m.callbackButton('📋 Запросити друзів', 'toRefferal')],
                         [m.callbackButton('↩️ Повернутись в меню', 'go_exit')],

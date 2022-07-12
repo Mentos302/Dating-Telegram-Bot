@@ -21,7 +21,7 @@ class ProfileService {
     getProfile(chat_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const profile = Profile.findOne({ chat_id });
+                const profile = yield Profile.findOne({ chat_id });
                 return profile;
             }
             catch (e) {

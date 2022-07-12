@@ -45,23 +45,15 @@ class DisplayController {
     getCandidates(session) {
         return __awaiter(this, void 0, void 0, function* () {
             session.searchingNow = true;
-            const searching = yield (0, searching_service_1.default)(session);
-            if (searching) {
+            const candidates = yield (0, searching_service_1.default)(session);
+            if (candidates) {
                 session.searchingNow = false;
-                let { candidates, citiesCache } = searching;
-                if (!citiesCache.length)
-                    citiesCache = [];
-                session.city = citiesCache[0];
                 session.candidates = session.candidates
                     ? session.candidates.concat(candidates)
                     : candidates;
-                session.citiesCache = citiesCache;
                 candidates.forEach((e) => {
                     session.relations.push(e.chat_id);
                 });
-                if (session.candidates.length < 10) {
-                    this.getCandidates(session).catch((e) => (0, error_notification_1.default)(e));
-                }
             }
         });
     }

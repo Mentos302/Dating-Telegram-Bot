@@ -18,6 +18,7 @@ exports.default = (bot) => {
     const ActionMenu = require('./scenes/Swiper/Menu')();
     const LikelyMain = require('./scenes/Likely/Display')();
     const Refferal = require('./scenes/Profile/Refferal')();
+    const AdminScene = require('./scenes/Spam/Main')();
     const stage = new Stage([
         GreetingScene,
         AgeScene,
@@ -35,6 +36,7 @@ exports.default = (bot) => {
         ActionMenu,
         LikelyMain,
         Refferal,
+        AdminScene,
     ], {
         ttl: 120,
     });

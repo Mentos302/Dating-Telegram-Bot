@@ -12,15 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const profiles_1 = __importDefault(require("./profiles"));
-const searchCandidates = ({ profile, relations, }) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const candidates = yield (0, profiles_1.default)(profile, relations);
-        if (candidates.length)
-            return candidates;
+const database_1 = __importDefault(require("../database"));
+const { User } = database_1.default;
+class AdminService {
+    getUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield User.find();
+                return users;
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
     }
-    catch (e) {
-        throw e;
+    removeUser(chat_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield User.deleteOne({ chat_id });
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
     }
-});
-exports.default = searchCandidates;
+}
+exports.default = new AdminService();
