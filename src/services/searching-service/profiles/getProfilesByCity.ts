@@ -4,15 +4,15 @@ import BotError from '../../../exceptions/botError'
 
 const { Profile } = db
 
-export default async (chat_id: number, city: string) => {
+export default async (chat_id: number, candidateAge: number) => {
   try {
-    let cityProfiles: Promise<IProfile[]> = await Profile.find({
-      city,
+    let profiles: Promise<IProfile[]> = await Profile.find({
+      candidateAge: { $gt: candidateAge - 1 },
       chat_id: { $ne: chat_id },
       is_active: true,
     })
 
-    return cityProfiles
+    return profiles
   } catch (e: any) {
     throw new BotError(`Unexpected error with profiles getting by city`, e)
   }

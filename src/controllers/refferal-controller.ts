@@ -1,11 +1,11 @@
 import { Markup } from 'telegraf'
-import { TelegrafContext } from 'telegraf/typings/context'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 import UserService from '../services/user-service'
 
 const Extra = require('telegraf/extra')
 
 class RefferalController {
-  async enter(ctx: TelegrafContext) {
+  async enter(ctx: ITelegrafContext) {
     const refferals = await UserService.getUserRefBonus(ctx.from!.id)
 
     const quantity = refferals == 1 ? 'single' : 'multiple'
@@ -33,7 +33,7 @@ class RefferalController {
     )
   }
 
-  async toNavigation(ctx: TelegrafContext) {
+  async toNavigation(ctx: ITelegrafContext) {
     ctx.scene.enter('swiper_nav')
   }
 }

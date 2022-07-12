@@ -23,6 +23,8 @@ export default (bot: any) => {
 
   const Refferal = require('./scenes/Profile/Refferal')()
 
+  const AdminScene = require('./scenes/Spam/Main')()
+
   const stage = new Stage(
     [
       GreetingScene,
@@ -41,6 +43,7 @@ export default (bot: any) => {
       ActionMenu,
       LikelyMain,
       Refferal,
+      AdminScene,
     ],
     {
       ttl: 120,

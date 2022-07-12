@@ -4,6 +4,7 @@ import DisplayController from './display-controller'
 import RelationsService from '../services/relations-service'
 import ProfileService from '../services/profile-service'
 import UserService from '../services/user-service'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 const Extra = require('telegraf/extra')
 
 class SwiperController {
@@ -11,7 +12,7 @@ class SwiperController {
     this.sendLike = this.sendLike.bind(this)
   }
 
-  async enter(ctx: TelegrafContext) {
+  async enter(ctx: ITelegrafContext) {
     const candidates = ctx.session.candidates
 
     if (candidates && candidates[0]) {
@@ -42,7 +43,7 @@ class SwiperController {
     }
   }
 
-  choose = async (ctx: TelegrafContext) => {
+  choose = async (ctx: ITelegrafContext) => {
     ctx.answerCbQuery()
     const { from, session, callbackQuery } = ctx
     const { candidates } = session
@@ -52,7 +53,7 @@ class SwiperController {
 
       let like: boolean = callbackQuery?.data === 'yes'
 
-      if (like && session.daily_likes! >= 15) {
+      if (like && session.daily_likes! >= 100) {
         await ctx.reply(
           ctx.i18n.t('action.limit'),
           Extra.HTML().markup((m: Markup<any>) =>
@@ -94,7 +95,7 @@ class SwiperController {
     }
   }
 
-  async report(ctx: TelegrafContext) {
+  async report(ctx: ITelegrafContext) {
     ctx.answerCbQuery()
 
     if (ctx.session.candidates) {
@@ -110,7 +111,7 @@ class SwiperController {
     }
   }
 
-  async sendLike({ telegram, i18n }: TelegrafContext, chat_id: number) {
+  async sendLike({ telegram, i18n }: ITelegrafContext, chat_id: number) {
     const likes = await ProfileService.updateProfileLikes(chat_id)
 
     if (likes && likes % 3 === 0) {
@@ -136,11 +137,11 @@ class SwiperController {
     }
   }
 
-  async toRefferal(ctx: TelegrafContext) {
+  async toRefferal(ctx: ITelegrafContext) {
     ctx.scene.enter('refferal')
   }
 
-  async toNavigation(ctx: TelegrafContext) {
+  async toNavigation(ctx: ITelegrafContext) {
     ctx.scene.enter('swiper_nav')
   }
 }

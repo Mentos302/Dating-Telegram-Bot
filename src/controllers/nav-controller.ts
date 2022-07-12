@@ -1,11 +1,11 @@
-import Telegraf, { Markup } from 'telegraf'
-import { TelegrafContext } from 'telegraf/typings/context'
+import { Markup } from 'telegraf'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 import ProfileService from '../services/profile-service'
 import RelationsService from '../services/relations-service'
 const Extra = require('telegraf/extra')
 
 class NavigationController {
-  showMenu(ctx: TelegrafContext) {
+  showMenu(ctx: ITelegrafContext) {
     ctx.replyWithHTML(
       ctx.i18n.t('action.menu'),
       Extra.markup((m: Markup<any>) =>
@@ -20,7 +20,7 @@ class NavigationController {
     )
   }
 
-  async closeConfirmation(ctx: TelegrafContext) {
+  async closeConfirmation(ctx: ITelegrafContext) {
     ctx.replyWithHTML(
       ctx.i18n.t('close.main'),
       Extra.markup((m: Markup<any>) =>
@@ -32,7 +32,7 @@ class NavigationController {
     )
   }
 
-  async closeProfile(ctx: TelegrafContext) {
+  async closeProfile(ctx: ITelegrafContext) {
     await ProfileService.deleteProfile(ctx.from!.id)
     await RelationsService.deleteAllActivities(ctx.from!.id)
 
@@ -48,11 +48,11 @@ class NavigationController {
     ctx.scene.leave()
   }
 
-  async toMainScene(ctx: TelegrafContext) {
+  async toMainScene(ctx: ITelegrafContext) {
     ctx.scene.enter('swiper_main', { is_first: true })
   }
 
-  async toProfileScene(ctx: TelegrafContext) {
+  async toProfileScene(ctx: ITelegrafContext) {
     ctx.scene.enter('profile_menu')
   }
 }

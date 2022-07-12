@@ -6,6 +6,7 @@ import sceneInitialisation from './stage'
 import { TelegrafContext } from 'telegraf/typings/context'
 import updateMiddleware from './middlewares/update-middleware'
 import errorNotification from './exceptions/error-notification'
+import { ITelegrafContext } from './interfaces/ITelegrafContext'
 const rateLimit = require('telegraf-ratelimit')
 const session = require('telegraf/session')
 
@@ -27,7 +28,11 @@ export default () => {
       window: 1000,
       limit: 1,
       onLimitExceeded: (ctx: TelegrafContext) => {
-        ctx.reply('Спокійніше, бо я не встигаю 😤')
+        // try {
+        //   ctx.reply('Спокійніше, бо я не встигаю 😤')
+        // } catch (error) {
+        //   console.log(error)
+        // }
       },
     })
   )
@@ -41,6 +46,10 @@ export default () => {
   )
 
   sceneInitialisation(bot)
+
+  bot.command('sub_spam', (ctx: ITelegrafContext) =>
+    ctx.scene.enter('admin_spam')
+  )
 
   bot.use(updateMiddleware)
 

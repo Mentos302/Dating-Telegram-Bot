@@ -11,7 +11,7 @@ const { Profile, City } = db
 class ProfileService {
   async getProfile(chat_id: number) {
     try {
-      const profile = Profile.findOne({ chat_id })
+      const profile = await Profile.findOne({ chat_id })
 
       return profile
     } catch (e: any) {

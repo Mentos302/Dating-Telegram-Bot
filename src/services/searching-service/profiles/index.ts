@@ -1,15 +1,14 @@
 import IProfile from '../../../interfaces/IProfile'
-import getProfilesByCity from './getProfilesByCity'
+import getProfiles from './getProfilesByCity'
 import relationsFilter from './relationsFilter'
 import compatibilityValidation from './compatibilityValidation'
 
 export default async (
   liker: IProfile,
-  city: string,
   relations?: number[]
 ): Promise<IProfile[]> => {
   try {
-    let profiles = await getProfilesByCity(liker.chat_id, city)
+    let profiles = await getProfiles(liker.chat_id, liker.candidateAge)
 
     if (relations?.length) {
       profiles = await relationsFilter(profiles, relations)

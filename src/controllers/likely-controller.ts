@@ -4,6 +4,7 @@ import RelationsService from '../services/relations-service'
 import IProfile from '../interfaces/IProfile'
 import ProfileService from '../services/profile-service'
 import { Markup } from 'telegraf'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 const Extra = require('telegraf/extra')
 
 class LikelyContoroller {
@@ -11,7 +12,7 @@ class LikelyContoroller {
     this.matchHandler = this.matchHandler.bind(this)
   }
 
-  async enter(ctx: TelegrafContext) {
+  async enter(ctx: ITelegrafContext) {
     const { scene, session } = ctx
 
     session.likely_candidates = []
@@ -25,7 +26,7 @@ class LikelyContoroller {
       DisplayController.showCandidates(ctx, session.likely_candidates[0])
   }
 
-  choose = async (ctx: TelegrafContext) => {
+  choose = async (ctx: ITelegrafContext) => {
     const { from, session, callbackQuery } = ctx
 
     if (session.likely_candidates?.length) {
@@ -53,7 +54,7 @@ class LikelyContoroller {
     }
   }
 
-  async report(ctx: TelegrafContext) {
+  async report(ctx: ITelegrafContext) {
     if (ctx.session.likely_candidates) {
       const { chat_id } = ctx.session.likely_candidates[0]
 
@@ -67,7 +68,7 @@ class LikelyContoroller {
     }
   }
 
-  async matchHandler(ctx: TelegrafContext, liked: IProfile) {
+  async matchHandler(ctx: ITelegrafContext, liked: IProfile) {
     const { from, i18n, telegram, replyWithHTML } = ctx
 
     replyWithHTML(
@@ -106,7 +107,7 @@ class LikelyContoroller {
     }
   }
 
-  async continue(ctx: TelegrafContext) {
+  async continue(ctx: ITelegrafContext) {
     const candidates = ctx.session.likely_candidates
     candidates?.shift()
 
@@ -119,7 +120,7 @@ class LikelyContoroller {
     }
   }
 
-  async toNavigation(ctx: TelegrafContext) {
+  async toNavigation(ctx: ITelegrafContext) {
     ctx.scene.enter('swiper_nav')
   }
 }

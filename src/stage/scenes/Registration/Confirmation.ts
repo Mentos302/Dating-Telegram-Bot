@@ -1,6 +1,6 @@
 const Scene = require('telegraf/scenes/base')
-import { TelegrafContext } from 'telegraf/typings/context'
 import controller from '../../../controllers/reg-controller'
+import { ITelegrafContext } from '../../../interfaces/ITelegrafContext'
 
 module.exports = () => {
   const scene = new Scene('reg9')
@@ -11,6 +11,6 @@ module.exports = () => {
 
   scene.action('edit', controller.resConfirm)
 
-  scene.on('message', (ctx: TelegrafContext) => ctx.scene.reenter('reg9'))
+  scene.on('message', (ctx: ITelegrafContext) => ctx.scene.reenter('reg9'))
   return scene
 }

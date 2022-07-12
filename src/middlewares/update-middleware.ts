@@ -1,4 +1,3 @@
-import { TelegrafContext } from 'telegraf/typings/context'
 import RelationService from '../services/relations-service'
 import ProfileService from '../services/profile-service'
 import UserService from '../services/user-service'
@@ -6,13 +5,15 @@ import IProfile from '../interfaces/IProfile'
 import IUser from '../interfaces/IUser'
 import DisplayController from '../controllers/display-controller'
 import errorNotification from '../exceptions/error-notification'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 
-export default async (ctx: TelegrafContext) => {
+export default async (ctx: ITelegrafContext) => {
   try {
     if (ctx.from) {
       const user: IUser = await UserService.getUser(ctx.from!.id)
 
       if (user) {
+        await UserService.activityUpdate(ctx.from!.id)
         if (
           user.daily_likes &&
           Math.floor(Date.now() / 1000) - user.last_activity > 86400
@@ -65,6 +66,6 @@ export default async (ctx: TelegrafContext) => {
   } catch (e) {
     ctx.reply('⚙️ Щось пішло не так, спробуй ще раз трохи пізніше')
 
-    throw e
+    // throw e
   }
 }

@@ -1,13 +1,11 @@
-import Telegraf, { Markup } from 'telegraf'
-import { TelegrafContext } from 'telegraf/typings/context'
-import BotError from '../exceptions/error-notification'
-import IProfile from '../interfaces/IProfile'
+import { Markup } from 'telegraf'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 import ProfileService from '../services/profile-service'
 import RelationsService from '../services/relations-service'
 const Extra = require('telegraf/extra')
 
 class ProfileController {
-  async sendProfile(ctx: TelegrafContext) {
+  async sendProfile(ctx: ITelegrafContext) {
     try {
       const { name, age, city, descript, avatar } = ctx.session.profile
 
@@ -49,13 +47,13 @@ class ProfileController {
     }
   }
 
-  async regAgain(ctx: TelegrafContext) {
+  async regAgain(ctx: ITelegrafContext) {
     if (ctx.from) await ProfileService.deleteProfile(ctx.from.id)
 
     ctx.scene.enter('reg2')
   }
 
-  async changeDesc(ctx: TelegrafContext) {
+  async changeDesc(ctx: ITelegrafContext) {
     const description = ctx.message!.text.replace(/\./g, ' ').replace(/@/g, ' ')
 
     if (ctx.from) {
@@ -66,7 +64,7 @@ class ProfileController {
     }
   }
 
-  async changePhoto(ctx: TelegrafContext) {
+  async changePhoto(ctx: ITelegrafContext) {
     const avatar = {
       is_video: false,
       file_id: ctx.message!.photo[0].file_id,
@@ -81,7 +79,7 @@ class ProfileController {
     ctx.scene.enter('profile_menu')
   }
 
-  async changeVideo(ctx: TelegrafContext) {
+  async changeVideo(ctx: ITelegrafContext) {
     const avatar = {
       is_video: true,
       file_id: ctx.message!.video.file_id,
@@ -96,23 +94,23 @@ class ProfileController {
     ctx.scene.enter('profile_menu')
   }
 
-  async toRegAgain(ctx: TelegrafContext) {
+  async toRegAgain(ctx: ITelegrafContext) {
     ctx.scene.enter(`reg2`)
   }
 
-  async toChangeAvatar(ctx: TelegrafContext) {
+  async toChangeAvatar(ctx: ITelegrafContext) {
     ctx.scene.enter(`editavatar`)
   }
 
-  async toChangeDescript(ctx: TelegrafContext) {
+  async toChangeDescript(ctx: ITelegrafContext) {
     ctx.scene.enter(`editdescript`)
   }
 
-  async toSwiper(ctx: TelegrafContext) {
+  async toSwiper(ctx: ITelegrafContext) {
     ctx.scene.enter('swiper_main', { is_first: true })
   }
 
-  messageHandler(ctx: TelegrafContext) {
+  messageHandler(ctx: ITelegrafContext) {
     ctx.scene.reenter()
   }
 }

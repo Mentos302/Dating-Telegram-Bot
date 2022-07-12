@@ -1,10 +1,9 @@
 import { Markup } from 'telegraf'
-import { TelegrafContext } from 'telegraf/typings/context'
 import IProfile from '../interfaces/IProfile'
 import ISession from '../interfaces/ISession'
 import SearchCandidates from '../services/searching-service'
-import BotError from '../exceptions/error-notification'
 import errorNotification from '../exceptions/error-notification'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 const Extra = require('telegraf/extra')
 
 class DisplayController {
@@ -13,7 +12,7 @@ class DisplayController {
     this.controlKeyboard = this.controlKeyboard
   }
 
-  async showCandidates(ctx: TelegrafContext, profile: IProfile) {
+  async showCandidates(ctx: ITelegrafContext, profile: IProfile) {
     const { scene, session, replyWithPhoto, replyWithVideo } = ctx
 
     let { is_first, likes } = scene.state
@@ -46,31 +45,22 @@ class DisplayController {
   async getCandidates(session: ISession) {
     session.searchingNow = true
 
-    const searching = await SearchCandidates(session)
+    const candidates = await SearchCandidates(session)
 
-    if (searching) {
+    if (candidates) {
       session.searchingNow = false
-      let { candidates, citiesCache } = searching
 
-      if (!citiesCache.length) citiesCache = []
-
-      session.city = citiesCache[0]
       session.candidates = session.candidates
         ? session.candidates.concat(candidates)
         : candidates
-      session.citiesCache = citiesCache
 
       candidates.forEach((e) => {
         session.relations.push(e.chat_id)
       })
-
-      if (session.candidates.length < 10) {
-        this.getCandidates(session).catch((e) => errorNotification(e))
-      }
     }
   }
 
-  controlKeyboard({ i18n }: TelegrafContext, profile: IProfile) {
+  controlKeyboard({ i18n }: ITelegrafContext, profile: IProfile) {
     const { name, age, city, descript } = profile
 
     return Extra.markup((m: Markup<any>) => {
@@ -93,7 +83,7 @@ class DisplayController {
   }
 
   async editMessage(
-    { i18n, editMessageMedia, editMessageCaption }: TelegrafContext,
+    { i18n, editMessageMedia, editMessageCaption }: ITelegrafContext,
     profile: IProfile
   ) {
     const { name, age, city, descript, avatar } = profile

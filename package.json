@@ -25,7 +25,7 @@
     "mongoose": "^6.0.12",
     "ngrok": "^4.2.2",
     "node-fetch": "^2.6.6",
-    "telegraf": "^3.39.0",
+    "telegraf": "3.39.0",
     "telegraf-i18n": "^6.6.0",
     "telegraf-ratelimit": "^2.0.0"
   }

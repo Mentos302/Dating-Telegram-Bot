@@ -1,6 +1,7 @@
 import { Markup } from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
 import errorNotification from '../exceptions/error-notification'
+import { ITelegrafContext } from '../interfaces/ITelegrafContext'
 
 import ProfileService from '../services/profile-service'
 import DisplayController from './display-controller'
@@ -8,7 +9,7 @@ import DisplayController from './display-controller'
 const Extra = require('telegraf/extra')
 
 class RegController {
-  async greeting(ctx: TelegrafContext) {
+  async greeting(ctx: ITelegrafContext) {
     ctx.replyWithHTML(
       ctx.i18n.t('reg.greeting'),
       Extra.markup((m: Markup<any>) =>
@@ -17,15 +18,15 @@ class RegController {
     )
   }
 
-  async regStart(ctx: TelegrafContext) {
+  async regStart(ctx: ITelegrafContext) {
     ctx.scene.enter('reg2')
   }
 
-  reqAge({ reply, i18n }: TelegrafContext) {
+  reqAge({ reply, i18n }: ITelegrafContext) {
     reply(i18n.t('reg.age'), Extra.HTML())
   }
 
-  resAge({ scene, i18n, message, replyWithHTML }: TelegrafContext) {
+  resAge({ scene, i18n, message, replyWithHTML }: ITelegrafContext) {
     const age: string = message!.text
 
     isNaN(parseInt(age?.trim()))
@@ -33,7 +34,7 @@ class RegController {
       : scene.enter(`reg3`, { age })
   }
 
-  reqGender({ replyWithHTML, i18n }: TelegrafContext) {
+  reqGender({ replyWithHTML, i18n }: ITelegrafContext) {
     replyWithHTML(
       i18n.t('reg.sex'),
       Extra.markup((m: Markup<any>) =>
@@ -45,15 +46,15 @@ class RegController {
     )
   }
 
-  async resGenderMale(ctx: TelegrafContext) {
+  async resGenderMale(ctx: ITelegrafContext) {
     ctx.scene.enter('reg4', { ...ctx.scene.state, gender: 1 })
   }
 
-  async resGenderFemale(ctx: TelegrafContext) {
+  async resGenderFemale(ctx: ITelegrafContext) {
     ctx.scene.enter('reg4', { ...ctx.scene.state, gender: 0 })
   }
 
-  reqSex({ replyWithHTML, i18n }: TelegrafContext) {
+  reqSex({ replyWithHTML, i18n }: ITelegrafContext) {
     replyWithHTML(
       i18n.t('reg.int'),
       Extra.markup((m: Markup<any>) =>
@@ -66,7 +67,7 @@ class RegController {
     )
   }
 
-  async resSex(ctx: TelegrafContext) {
+  async resSex(ctx: ITelegrafContext) {
     let sex
 
     switch (ctx.callbackQuery!.data) {
@@ -86,7 +87,7 @@ class RegController {
     ctx.reply(ctx.i18n.t('reg.candidateage'), Extra.HTML())
   }
 
-  resCandidateAge(ctx: TelegrafContext) {
+  resCandidateAge(ctx: ITelegrafContext) {
     const candidateAge = ctx.message?.text
 
     candidateAge && !isNaN(parseInt(candidateAge))
@@ -94,11 +95,11 @@ class RegController {
       : ctx.reply(ctx.i18n.t('reg.age_error'), Extra.HTML())
   }
 
-  reqCity(ctx: TelegrafContext) {
+  reqCity(ctx: ITelegrafContext) {
     ctx.replyWithHTML(ctx.i18n.t('reg.city'))
   }
 
-  async resCity(ctx: TelegrafContext) {
+  async resCity(ctx: ITelegrafContext) {
     ctx.scene.enter('reg6', { ...ctx.scene.state, city: ctx.message?.text })
 
     ctx.session = {
@@ -113,7 +114,7 @@ class RegController {
     )
   }
 
-  reqName({ replyWithHTML, i18n }: TelegrafContext) {
+  reqName({ replyWithHTML, i18n }: ITelegrafContext) {
     replyWithHTML(
       i18n.t('reg.name'),
       Extra.markup((m: Markup<any>) =>
@@ -124,15 +125,15 @@ class RegController {
     )
   }
 
-  resName({ message, scene }: TelegrafContext) {
+  resName({ message, scene }: ITelegrafContext) {
     scene.enter('reg7', { ...scene.state, name: message?.text })
   }
 
-  async resNameDefault(ctx: TelegrafContext) {
+  async resNameDefault(ctx: ITelegrafContext) {
     ctx.scene.enter('reg7', { ...ctx.scene.state, name: ctx.from?.first_name })
   }
 
-  reqDesc({ replyWithHTML, i18n }: TelegrafContext) {
+  reqDesc({ replyWithHTML, i18n }: ITelegrafContext) {
     replyWithHTML(
       i18n.t('reg.desc'),
       Extra.markup((m: Markup<any>) =>
@@ -141,21 +142,21 @@ class RegController {
     )
   }
 
-  async resDescSkip(ctx: TelegrafContext) {
+  async resDescSkip(ctx: ITelegrafContext) {
     ctx.scene.enter('reg8', { ...ctx.scene.state, descript: `` })
   }
 
-  resDesc({ message, scene }: TelegrafContext) {
+  resDesc({ message, scene }: ITelegrafContext) {
     let linkFilter = message?.text.replace(/\./g, ' ').replace(/@/g, ' ')
 
     scene.enter('reg8', { ...scene.state, descript: linkFilter })
   }
 
-  reqAvatar({ replyWithHTML, i18n }: TelegrafContext) {
+  reqAvatar({ replyWithHTML, i18n }: ITelegrafContext) {
     replyWithHTML(i18n.t('reg.avatar'))
   }
 
-  resAvatarPhoto({ message, scene }: TelegrafContext) {
+  resAvatarPhoto({ message, scene }: ITelegrafContext) {
     scene.enter('reg9', {
       ...scene.state,
       avatar: {
@@ -164,7 +165,7 @@ class RegController {
     })
   }
 
-  resAvatarVideo({ message, scene }: TelegrafContext) {
+  resAvatarVideo({ message, scene }: ITelegrafContext) {
     scene.enter('reg9', {
       ...scene.state,
       avatar: {
@@ -180,7 +181,7 @@ class RegController {
     replyWithPhoto,
     replyWithHTML,
     i18n,
-  }: TelegrafContext) {
+  }: ITelegrafContext) {
     const { name, age, city, descript, avatar } = scene.state
 
     if (avatar.is_video) {
@@ -213,7 +214,7 @@ class RegController {
     )
   }
 
-  async resConfirm(ctx: TelegrafContext) {
+  async resConfirm(ctx: ITelegrafContext) {
     const { from, scene, session, callbackQuery } = ctx
 
     const userProfile = {
@@ -224,7 +225,7 @@ class RegController {
     session.profile = userProfile
     ProfileService.createProfile(userProfile)
 
-    callbackQuery!.data === 'well'
+    callbackQuery.data === 'well'
       ? scene.enter('swiper_main', { is_first: true })
       : scene.enter('profile_menu')
   }
