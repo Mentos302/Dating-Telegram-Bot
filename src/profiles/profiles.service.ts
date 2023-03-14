@@ -16,6 +16,15 @@ export class ProfilesService {
     return profile;
   }
 
+  async update(chat_id: number, updateProfileDto): Promise<Profile> {
+    const profile = await this.profilesModel.findOneAndUpdate(
+      { chat_id },
+      updateProfileDto,
+    );
+
+    return profile;
+  }
+
   async findByChatId(chat_id: number): Promise<Profile> {
     const profile = await this.profilesModel.findOne({ chat_id });
 
@@ -35,5 +44,11 @@ export class ProfilesService {
       type: 'Point',
       coordinates: [response.data[0].latitude, response.data[0].longitude],
     };
+  }
+
+  async delete(chat_id): Promise<Profile> {
+    const profile = await this.profilesModel.findOneAndDelete({ chat_id });
+
+    return profile;
   }
 }

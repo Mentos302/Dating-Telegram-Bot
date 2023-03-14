@@ -10,7 +10,8 @@ export class RegistrationConfirmationScene {
 
   @SceneEnter()
   async onSceneEnter(ctx: Context) {
-    const { name, age, city, description, avatar } = ctx.scene.state as Profile;
+    const { name, age, city, description, avatar, gender } = ctx.scene
+      .state as Profile;
 
     const caption = `<b>${name}, ${age}</b>. ${city} \n\n${description}`;
 
@@ -25,6 +26,8 @@ export class RegistrationConfirmationScene {
         parse_mode: 'HTML',
       });
     }
+
+    ctx.session['profile'] = ctx.scene.state;
 
     ctx.replyWithHTML(
       `Все правильно?`,
@@ -52,7 +55,7 @@ export class RegistrationConfirmationScene {
       chat_id: ctx.from.id,
     });
 
-    ctx.scene.enter('profile_menu');
+    ctx.scene.enter('account_menu');
   }
 
   @On('message')

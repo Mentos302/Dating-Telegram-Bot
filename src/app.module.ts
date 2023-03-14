@@ -13,7 +13,6 @@ import { ProfilesModule } from './profiles/profiles.module';
     TelegrafModule.forRoot({
       token: process.env.BOT_TOKEN,
       middlewares: [session()],
-      include: [],
     }),
     UsersModule,
     ProfilesModule,

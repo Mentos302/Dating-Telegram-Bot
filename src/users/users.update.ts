@@ -46,14 +46,10 @@ export class UsersUpdate {
 
       const relations = await this.relationsService.findByChatId(ctx.from.id);
 
-      ctx.scene.state = {
-        profile,
-        relations,
-      };
+      ctx.session['profile'] = profile;
+      ctx.session['relations'] = relations;
 
-      ctx.scene.enter('profile_menu');
+      ctx.scene.enter('account_menu');
     }
-
-    ctx.scene.enter('reg_greeting');
   }
 }
