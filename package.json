@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "mongoose": "^6.10.3",
     "nestjs-telegraf": "^2.6.3",
+    "node-fetch": "^2.6.9",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",

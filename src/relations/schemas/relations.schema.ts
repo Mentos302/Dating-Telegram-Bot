@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type RelationDocument = HydratedDocument<Relation>;
 
-@Schema()
+@Schema({ versionKey: false })
 export class Relation {
   @Prop({ type: Number, required: true })
   host_id: number;
