@@ -31,4 +31,10 @@ export class RelationsService {
 
     return relations.map((rel) => rel.host_id);
   }
+
+  async delete(chat_id: number) {
+    await this.relationsModel.deleteMany({
+      $or: [{ host_id: chat_id }, { cli_id: chat_id }],
+    });
+  }
 }
