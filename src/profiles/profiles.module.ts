@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RelationsModule } from 'src/relations/relations.module';
 import { ProfilesService } from './profiles.service';
 import { ProfilesUpdate } from './profiles.update';
 import { AccountScenes } from './scenes/account';
@@ -9,6 +10,7 @@ import { Profile, ProfileSchema } from './schemas/profiles.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Profile.name, schema: ProfileSchema }]),
+    forwardRef(() => RelationsModule),
   ],
   providers: [
     ProfilesUpdate,

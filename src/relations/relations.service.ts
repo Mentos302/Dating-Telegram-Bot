@@ -9,7 +9,28 @@ export class RelationsService {
     @InjectModel(Relation.name) private relationsModel: Model<RelationDocument>,
   ) {}
 
-  async findByChatId(chat_id: number): Promise<Relation[]> {
+  async create(host_id: number, cli_id: number, host_like: boolean = false) {
+    const relation = await this.relationsModel.create({
+      host_id,
+      cli_id,
+      host_like,
+    });
+
+    return relation;
+  }
+
+  async updateLikely(host_id: number, cli_id: number) {
+    const relation = await this.relationsModel.findOneAndUpdate(
+      { host_id, cli_id },
+      { cli_checked: true },
+    );
+
+    return relation;
+  }
+
+  async findByChatId(chat_id: number): Promise<number[]> {
+    const viewed = new Set<number>();
+
     const relations = await this.relationsModel.find({
       $or: [
         { host_id: chat_id },
@@ -19,7 +40,12 @@ export class RelationsService {
       ],
     });
 
-    return relations;
+    relations.map((rel) => {
+      viewed.add(rel.host_id);
+      viewed.add(rel.cli_id);
+    });
+
+    return Array.from(viewed);
   }
 
   async findLikes(chat_id: number): Promise<number[]> {
@@ -32,9 +58,11 @@ export class RelationsService {
     return relations.map((rel) => rel.host_id);
   }
 
-  async delete(chat_id: number) {
-    await this.relationsModel.deleteMany({
-      $or: [{ host_id: chat_id }, { cli_id: chat_id }],
-    });
+  async delete(chat_id: number, selfActivity: boolean = false) {
+    await this.relationsModel.deleteMany(
+      selfActivity
+        ? { cli_id: chat_id }
+        : { $or: [{ host_id: chat_id }, { cli_id: chat_id }] },
+    );
   }
 }

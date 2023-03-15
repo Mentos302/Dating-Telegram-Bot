@@ -1,10 +1,14 @@
 import { Scene, SceneEnter, On, Ctx, Message } from 'nestjs-telegraf';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
+import { RelationsService } from 'src/relations/relations.service';
 
 @Scene('edit_avatar')
 export class AccountAvatarScene {
-  constructor(private readonly profilesService: ProfilesService) {}
+  constructor(
+    private readonly profilesService: ProfilesService,
+    private readonly relationsService: RelationsService,
+  ) {}
 
   @SceneEnter()
   async onSceneEnter(ctx: Context) {
@@ -23,6 +27,8 @@ export class AccountAvatarScene {
       avatar,
     });
 
+    await this.relationsService.delete(ctx.from.id, true);
+
     ctx.session['profile'].avatar = avatar;
 
     ctx.scene.enter('account_menu');
@@ -38,6 +44,8 @@ export class AccountAvatarScene {
     await this.profilesService.update(ctx.from.id, {
       avatar,
     });
+
+    await this.relationsService.delete(ctx.from.id, true);
 
     ctx.session['profile'].avatar = avatar;
 

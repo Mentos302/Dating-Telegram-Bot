@@ -41,14 +41,14 @@ export class Profile {
     file_id: string;
   };
 
+  @Prop({ type: Number, default: 0 })
+  likes: number;
+
   @Prop({ type: Boolean, default: true })
   is_active: boolean;
 
   @Prop({ type: Number, default: 0 })
   strikes: number;
-
-  @Prop({ type: Number, default: 0 })
-  attraction: number;
 }
 
 export const ProfileSchema = SchemaFactory.createForClass(Profile).index({

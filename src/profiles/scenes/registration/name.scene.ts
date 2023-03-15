@@ -16,6 +16,8 @@ export class RegistrationNameScene {
 
   @Action('first_name')
   async onOkayAction(ctx: Context): Promise<void> {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('reg_description', {
       ...ctx.scene.state,
       name: ctx.from.first_name,

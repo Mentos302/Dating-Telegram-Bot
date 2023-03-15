@@ -8,6 +8,7 @@ import {
   Update,
   Command,
   Ctx,
+  Action,
 } from 'nestjs-telegraf';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
@@ -31,7 +32,7 @@ export class UsersUpdate {
     private readonly relationsService: RelationsService,
   ) {}
 
-  @On('message')
+  @On(['message', 'callback_query'])
   async onMessage(@Ctx() ctx: Context): Promise<void> {
     const user = await this.usersService.findByChatId(ctx.from.id);
 
@@ -40,16 +41,21 @@ export class UsersUpdate {
     const profile = await this.profilesService.findByChatId(ctx.from.id);
 
     if (profile) {
-      const likes = await this.relationsService.findLikes(ctx.from.id);
-
-      if (likes.length) ctx.scene.enter('likely', { is_first: true, likes });
-
       const relations = await this.relationsService.findByChatId(ctx.from.id);
+      const likely = await this.relationsService.findLikes(ctx.from.id);
 
+      ctx.session['likely'] = likely;
       ctx.session['profile'] = profile;
       ctx.session['relations'] = relations;
+      ctx.session['candidates'] = await this.profilesService
+        .findCandidates(profile, relations)
+        .catch((e) => console.log(e));
 
-      ctx.scene.enter('account_menu');
+      likely.length
+        ? ctx.scene.enter('likely', { is_first: true })
+        : ctx.scene.enter('account_menu');
+    } else {
+      ctx.scene.enter('reg_greeting');
     }
   }
 }

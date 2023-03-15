@@ -40,12 +40,19 @@ export class RegistrationConfirmationScene {
 
   @Action('well')
   async onWellAction(ctx: Context) {
-    await this.profilesService.create({
+    const profile = {
       ...ctx.scene.state,
       chat_id: ctx.from.id,
-    });
+    };
 
-    ctx.scene.enter('swiper_main');
+    await this.profilesService.create(profile);
+
+    ctx.session['profile'] = profile;
+    ctx.session['relations'] = [];
+
+    ctx.answerCbQuery();
+
+    ctx.scene.enter('swiper_main', { is_first: true });
   }
 
   @Action('edit')
@@ -54,6 +61,8 @@ export class RegistrationConfirmationScene {
       ...ctx.scene.state,
       chat_id: ctx.from.id,
     });
+
+    ctx.answerCbQuery();
 
     ctx.scene.enter('account_menu');
   }

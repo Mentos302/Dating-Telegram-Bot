@@ -17,11 +17,15 @@ export class RegistrationGenderScene {
 
   @Action('boy')
   async onBoyAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('reg_candidate', { ...ctx.scene.state, gender: 1 });
   }
 
   @Action('girl')
   async onGirlAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('reg_candidate', { ...ctx.scene.state, gender: 0 });
   }
 

@@ -35,7 +35,12 @@ export class AccountMenuScene {
           { text: '📸', callback_data: 'avatar' },
           { text: '📝', callback_data: 'description' },
         ],
-        [{ text: '🚀 Продовжити перегляд профілів', callback_data: 'skip' }],
+        [
+          {
+            text: '🚀 Продовжити перегляд профілів',
+            callback_data: 'continue',
+          },
+        ],
       ]),
     );
   }
@@ -44,17 +49,30 @@ export class AccountMenuScene {
   async onReonboard(ctx: Context) {
     await this.profilesService.delete(ctx.from.id);
 
+    ctx.answerCbQuery();
+
     ctx.scene.enter('reg_age');
   }
 
   @Action('avatar')
   async onAvatar(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('edit_avatar');
   }
 
   @Action('description')
   async onDescription(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('edit_description');
+  }
+
+  @Action('continue')
+  async onContinueAction(ctx: Context) {
+    ctx.answerCbQuery();
+
+    ctx.scene.enter('swiper_main', { is_first: true });
   }
 
   @On('message')

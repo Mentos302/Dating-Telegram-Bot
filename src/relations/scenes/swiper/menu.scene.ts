@@ -32,18 +32,24 @@ export class SwiperMenuScene {
 
   @Action('continue')
   async onContinueAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('swiper_main', { is_first: true });
   }
 
   @Action('profile')
   async onProfileAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('account_menu');
   }
 
   @Action('close')
   async onCloseAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.replyWithHTML(
-      `🚨<b>Так ти не знатимеш, що комусь сподобався твій профіль</b>.\n\n<i>Точно хочеш відключити свій профіль?</i>`,
+      `🚨 <b>Так ти не знатимеш, що комусь сподобався твій профіль</b>.\n\n<i>Точно хочеш відключити свій профіль?</i>`,
       Markup.inlineKeyboard([
         { text: '✖️ Так', callback_data: 'close_confirm' },
         { text: '↩️ Назад', callback_data: 'go_back' },
@@ -51,10 +57,19 @@ export class SwiperMenuScene {
     );
   }
 
+  @Action('go_back')
+  async onGoBack(ctx: Context) {
+    ctx.answerCbQuery();
+
+    ctx.scene.enter('swiper_menu');
+  }
+
   @Action('close_confirm')
   async onCloseConfirmAction(ctx: Context) {
     await this.profilesService.delete(ctx.from.id);
     await this.relationsService.delete(ctx.from.id);
+
+    ctx.answerCbQuery();
 
     ctx.replyWithHTML(
       `👋 Надіюсь я допоміг тобі знайти когось, <b>радий був з тобою поспілкуватись.</b>\n\nБуде скучно - пиши, обов'язково знайдемо когось!`,

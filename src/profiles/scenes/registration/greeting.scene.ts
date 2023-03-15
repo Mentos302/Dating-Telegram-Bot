@@ -14,6 +14,8 @@ export class RegistrationGreetingScene {
 
   @Action('okay')
   async onOkayAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.enter('reg_age');
   }
 

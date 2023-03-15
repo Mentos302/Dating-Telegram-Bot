@@ -18,6 +18,8 @@ export class RegistrationCandidateScene {
 
   @Action('girls')
   async onGirlsAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.state = { ...ctx.scene.state, interest: 0 };
 
     ctx.replyWithHTML(
@@ -27,6 +29,8 @@ export class RegistrationCandidateScene {
 
   @Action('boys')
   async onBoysAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.state = { ...ctx.scene.state, interest: 1 };
 
     ctx.replyWithHTML(
@@ -36,6 +40,8 @@ export class RegistrationCandidateScene {
 
   @Action('both')
   async onBothAction(ctx: Context) {
+    ctx.answerCbQuery();
+
     ctx.scene.state = { ...ctx.scene.state, interest: 2 };
 
     ctx.replyWithHTML(

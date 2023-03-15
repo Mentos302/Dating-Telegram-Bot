@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Relation } from 'src/relations/schemas/relations.schema';
 import { Profile, ProfileDocument } from './schemas/profiles.schema';
 const fetch = require('node-fetch');
 
@@ -25,6 +26,16 @@ export class ProfilesService {
     return profile;
   }
 
+  async addNewLike(chat_id: number): Promise<number> {
+    const profile = await this.profilesModel.findOneAndUpdate(
+      { chat_id },
+      { $inc: { likes: 1 } },
+      { new: true, useFindAndModify: false },
+    );
+
+    return profile.likes;
+  }
+
   async findByChatId(chat_id: number): Promise<Profile> {
     const profile = await this.profilesModel.findOne({ chat_id });
 
@@ -44,6 +55,29 @@ export class ProfilesService {
       type: 'Point',
       coordinates: [response.data[0].latitude, response.data[0].longitude],
     };
+  }
+
+  async findCandidates(profile: Profile, relations: number[]) {
+    const limit = profile.age < 18 ? 3 : 5;
+
+    const candidates = await this.profilesModel.find({
+      age: {
+        $gte: profile.candidateAge,
+        $lte: profile.age + limit,
+      },
+      candidateAge: { $lte: profile.age },
+      gender: profile.interest === 2 ? [0, 1] : profile.interest,
+      interest: [2, profile.gender],
+      chat_id: { $nin: [...relations] },
+      is_active: true,
+      location: {
+        $near: {
+          $geometry: profile.location,
+        },
+      },
+    });
+
+    return candidates;
   }
 
   async delete(chat_id): Promise<Profile> {

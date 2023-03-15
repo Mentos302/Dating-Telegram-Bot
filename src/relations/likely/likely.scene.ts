@@ -4,10 +4,9 @@ import { ProfilesService } from 'src/profiles/profiles.service';
 import { Profile } from 'src/profiles/schemas/profiles.schema';
 import { RelationsService } from 'src/relations/relations.service';
 import { Markup, Telegraf } from 'telegraf';
-import { inlineKeyboard, keyboard } from 'telegraf/typings/markup';
 
-@Scene('swiper_main')
-export class SwiperMainScene {
+@Scene('likely')
+export class LikelyScene {
   constructor(
     @InjectBot()
     private readonly bot: Telegraf<Context>,
@@ -17,10 +16,11 @@ export class SwiperMainScene {
 
   @SceneEnter()
   async onSceneEnter(ctx: Context) {
-    const candidates: Profile[] = ctx.session['candidates'];
+    const candidates: number[] = ctx.session['likely'];
 
     if (candidates.length) {
-      const { name, avatar, age, city, description } = candidates[0];
+      const candidate = await this.profilesService.findByChatId(candidates[0]);
+      const { name, avatar, age, city, description } = candidate;
 
       const caption = `<b>${name}, ${age}</b>. ${city} \n\n${description}`;
 
@@ -52,7 +52,7 @@ export class SwiperMainScene {
               },
             });
 
-        // delete ctx.scene.state['is_first'];
+        delete ctx.scene.state['is_first'];
       } else {
         const media = avatar.file_id;
 
@@ -68,58 +68,54 @@ export class SwiperMainScene {
         });
       }
     } else {
-      ctx.replyWithHTML(
-        `😍 Ви переглянули <b>всі доступні профілі</b>, очікуйте незабаром Вам хтось відповість або з'являться нові профілі.\n\n💬 А поки <b>можете поспілкуватись</b> в нашому чаті @lviv_lampchat`,
-      );
-
-      ctx.scene.leave();
+      ctx.scene.enter('swiper_main');
     }
   }
 
   @Action('yes')
   async onYes(ctx: Context) {
-    const { chat_id }: Profile = ctx.session['candidates'][0];
-    const likes = await this.profilesService.addNewLike(chat_id);
+    const { name, chat_id } = await this.profilesService.findByChatId(
+      ctx.session['likely'][0],
+    );
 
-    if (likes && likes % 3 === 0) {
-      try {
-        await this.bot.telegram.sendMessage(
-          chat_id,
-          `😍 Твій профіль сподобався <b>${likes} людям</b>\n\n<i>Показати кому?</i>}`,
-          {
-            parse_mode: 'HTML',
-            reply_markup: {
-              inline_keyboard: [
-                [Markup.button.callback('Переглянути лайки ❤️', 'likely')],
-              ],
-            },
+    ctx.replyWithHTML(
+      `<b>❤️ Чудово!</b> У вас взаємна симпатія.\n\n<i>Не соромся написати першим(ою)</i> 👉 <a href="tg://user?id=${chat_id}">${name}</a>`,
+      Markup.inlineKeyboard([
+        { text: 'Продовжити пошуки ☺️🔎', callback_data: 'continue' },
+      ]),
+    );
+
+    try {
+      await this.bot.telegram.sendMessage(
+        chat_id,
+        `❤️ <b>Є взаємна симпатія!</b>\n\n<i>Не соромся написати першим(ою)</i> 👉 <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>`,
+        {
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [Markup.button.callback('📝 Мій профіль', 'rndmsht')],
+            ],
           },
-        );
-      } catch (e: any) {
-        if (e.response && e.response.error_code === 403) {
-          await this.profilesService.delete(chat_id);
-        } else {
-          throw new Error(`Unexpected error with like sending`);
-        }
+        },
+      );
+    } catch (e: any) {
+      if (e.response && e.response.error_code === 403) {
+        await this.profilesService.delete(chat_id);
+      } else {
+        throw new Error(`Unexpected error with like sending`);
       }
     }
 
-    await this.relationsService.create(ctx.from.id, chat_id, true);
-
-    ctx.session['candidates'].shift();
-
-    ctx.answerCbQuery();
-
-    ctx.scene.reenter();
+    // await this.relationsService.updateLikely(chat_id, ctx.from.id);
   }
 
   @Action('no')
   async onNo(ctx: Context) {
-    const { chat_id }: Profile = ctx.session['candidates'][0];
+    const chat_id: number = ctx.session['likely'][0];
 
-    await this.relationsService.create(ctx.from.id, chat_id);
+    await this.relationsService.updateLikely(chat_id, ctx.from.id);
 
-    ctx.session['candidates'].shift();
+    ctx.session['likely'].shift();
 
     ctx.answerCbQuery();
 
@@ -128,7 +124,9 @@ export class SwiperMainScene {
 
   @Action('report')
   async onReportAction(ctx: Context) {
-    let { strikes, chat_id }: Profile = ctx.session['candidates'][0];
+    let { strikes, chat_id } = await this.profilesService.findByChatId(
+      ctx.session['likely'][0],
+    );
 
     if (strikes > 2) {
       await this.profilesService.update(chat_id, { is_active: false });
@@ -138,9 +136,9 @@ export class SwiperMainScene {
       await this.profilesService.update(chat_id, { strikes });
     }
 
-    // await this.relationsService.create(ctx.from.id, chat_id);
+    await this.relationsService.updateLikely(chat_id, ctx.from.id);
 
-    ctx.session['candidates'].shift();
+    ctx.session['likely'].shift();
 
     ctx.answerCbQuery();
 
@@ -154,8 +152,21 @@ export class SwiperMainScene {
     ctx.scene.enter('swiper_menu');
   }
 
+  @Action('continue')
+  async onContinueAction(ctx: Context) {
+    ctx.session['likely'].shift();
+
+    ctx.answerCbQuery();
+
+    if (ctx.session['likely'].length) {
+      ctx.scene.enter('likely', { is_first: true });
+    } else {
+      ctx.scene.enter('swiper_main');
+    }
+  }
+
   @On('message')
   async onMessage(ctx: Context) {
-    ctx.scene.enter('swiper_menu');
+    ctx.scene.enter('likely', { is_first: true });
   }
 }
