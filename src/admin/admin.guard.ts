@@ -12,6 +12,10 @@ export class AdminGuard implements CanActivate {
 
     const isAdmin = this.ADMIN_IDS.includes(JSON.stringify(from.id));
 
-    return isAdmin;
+    if (!isAdmin) {
+      throw new TelegrafException('You are not admin 😡');
+    }
+
+    return true;
   }
 }

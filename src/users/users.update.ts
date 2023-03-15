@@ -1,21 +1,30 @@
-import { UseInterceptors } from '@nestjs/common';
-import { On, Update, Ctx } from 'nestjs-telegraf';
+import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { On, Update, Ctx, Command } from 'nestjs-telegraf';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
 import { Context } from '../interfaces/context.interface';
 import { UsersService } from './users.service';
-import { ResponseTimeInterceptor } from '../interceptors/response-time.interceptor';
-import { SentryInterceptor } from 'src/interceptors/sentry-interceptor';
+import { ResponseTimeInterceptor } from '../common/interceptors/response-time.interceptor';
+import { SentryInterceptor } from 'src/common/interceptors/sentry-interceptor';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
+import { AdminGuard } from 'src/admin/admin.guard';
 
 @Update()
 @UseInterceptors(SentryInterceptor)
 @UseInterceptors(ResponseTimeInterceptor)
+@UseFilters(TelegrafExceptionFilter)
 export class UsersUpdate {
   constructor(
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly relationsService: RelationsService,
   ) {}
+
+  @Command('admin')
+  @UseGuards(AdminGuard)
+  onAdminCommand(): string {
+    return 'Welcome judge';
+  }
 
   @On(['message', 'callback_query'])
   async onMessage(@Ctx() ctx: Context): Promise<void> {
