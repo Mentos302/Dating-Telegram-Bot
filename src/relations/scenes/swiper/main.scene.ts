@@ -1,4 +1,5 @@
 import { Scene, SceneEnter, On, Action, InjectBot } from 'nestjs-telegraf';
+import { AdminService } from 'src/admin/admin.service';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { Profile } from 'src/profiles/schemas/profiles.schema';
@@ -11,6 +12,7 @@ export class SwiperMainScene {
   constructor(
     @InjectBot()
     private readonly bot: Telegraf<Context>,
+    private readonly adminService: AdminService,
     private readonly profilesService: ProfilesService,
     private readonly relationsService: RelationsService,
   ) {}
@@ -132,6 +134,10 @@ export class SwiperMainScene {
     let { strikes, chat_id }: Profile = ctx.session['candidates'][0];
 
     if (strikes > 2) {
+      await this.adminService.reportUserNotification(
+        ctx.session['candidates'][0],
+      );
+
       await this.profilesService.update(chat_id, { is_active: false });
     } else {
       strikes++;

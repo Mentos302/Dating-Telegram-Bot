@@ -1,7 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { TelegrafExecutionContext, TelegrafException } from 'nestjs-telegraf';
-import { Context } from '../../interfaces/context.interface';
-import * as Sentry from '@sentry/node';
+import { Context } from '../interfaces/context.interface';
 
 @Injectable()
 export class AdminGuard implements CanActivate {

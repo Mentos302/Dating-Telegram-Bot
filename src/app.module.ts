@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { session } from 'telegraf';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ProfilesModule } from './profiles/profiles.module';
       middlewares: [session()],
     }),
     UsersModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

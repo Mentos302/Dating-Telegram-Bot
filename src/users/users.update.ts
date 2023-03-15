@@ -4,8 +4,8 @@ import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
 import { Context } from '../interfaces/context.interface';
 import { UsersService } from './users.service';
-import { ResponseTimeInterceptor } from '../common/interceptors/response-time.interceptor';
-import { SentryInterceptor } from 'src/common/interceptors/sentry-interceptor';
+import { ResponseTimeInterceptor } from '../interceptors/response-time.interceptor';
+import { SentryInterceptor } from 'src/interceptors/sentry-interceptor';
 
 @Update()
 @UseInterceptors(SentryInterceptor)

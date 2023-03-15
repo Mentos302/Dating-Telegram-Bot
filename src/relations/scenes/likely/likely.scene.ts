@@ -1,7 +1,7 @@
 import { Scene, SceneEnter, On, Action, InjectBot } from 'nestjs-telegraf';
+import { AdminService } from 'src/admin/admin.service';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
-import { Profile } from 'src/profiles/schemas/profiles.schema';
 import { RelationsService } from 'src/relations/relations.service';
 import { Markup, Telegraf } from 'telegraf';
 
@@ -10,6 +10,7 @@ export class LikelyScene {
   constructor(
     @InjectBot()
     private readonly bot: Telegraf<Context>,
+    private readonly adminService: AdminService,
     private readonly profilesService: ProfilesService,
     private readonly relationsService: RelationsService,
   ) {}
@@ -125,19 +126,23 @@ export class LikelyScene {
 
   @Action('report')
   async onReportAction(ctx: Context) {
-    let { strikes, chat_id } = await this.profilesService.findByChatId(
+    let profile = await this.profilesService.findByChatId(
       ctx.session['likely'][0],
     );
 
-    if (strikes > 2) {
-      await this.profilesService.update(chat_id, { is_active: false });
-    } else {
-      strikes++;
+    if (profile.strikes > 2) {
+      await this.adminService.reportUserNotification(profile);
 
-      await this.profilesService.update(chat_id, { strikes });
+      await this.profilesService.update(profile.chat_id, { is_active: false });
+    } else {
+      profile.strikes++;
+
+      await this.profilesService.update(profile.chat_id, {
+        strikes: profile.strikes,
+      });
     }
 
-    await this.relationsService.updateLikely(chat_id, ctx.from.id);
+    await this.relationsService.updateLikely(profile.chat_id, ctx.from.id);
 
     ctx.session['likely'].shift();
 

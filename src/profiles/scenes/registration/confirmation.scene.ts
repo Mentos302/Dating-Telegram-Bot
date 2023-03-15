@@ -1,17 +1,20 @@
-import { Scene, SceneEnter, Action, On } from 'nestjs-telegraf';
+import { Scene, SceneEnter, Action, On, InjectBot } from 'nestjs-telegraf';
+import { AdminService } from 'src/admin/admin.service';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { Profile } from 'src/profiles/schemas/profiles.schema';
-import { Markup } from 'telegraf';
+import { Markup, Telegraf } from 'telegraf';
 
 @Scene('reg_confirmation')
 export class RegistrationConfirmationScene {
-  constructor(private readonly profilesService: ProfilesService) {}
+  constructor(
+    private readonly profilesService: ProfilesService,
+    private readonly adminService: AdminService,
+  ) {}
 
   @SceneEnter()
   async onSceneEnter(ctx: Context) {
-    const { name, age, city, description, avatar, gender } = ctx.scene
-      .state as Profile;
+    const { name, age, city, description, avatar } = ctx.scene.state as Profile;
 
     const caption = `<b>${name}, ${age}</b>. ${city} \n\n${description}`;
 
@@ -26,6 +29,8 @@ export class RegistrationConfirmationScene {
         parse_mode: 'HTML',
       });
     }
+
+    await this.adminService.newUserNotification(ctx.scene.state as Profile);
 
     ctx.session['profile'] = ctx.scene.state;
 

@@ -13,5 +13,6 @@ import { UsersUpdate } from './users.update';
     RelationsModule,
   ],
   providers: [UsersUpdate, UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}
