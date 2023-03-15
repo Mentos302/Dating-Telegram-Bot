@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Relation } from 'src/relations/schemas/relations.schema';
 import { Profile, ProfileDocument } from './schemas/profiles.schema';
 const fetch = require('node-fetch');
 
@@ -63,7 +62,7 @@ export class ProfilesService {
     const candidates = await this.profilesModel.find({
       age: {
         $gte: profile.candidateAge,
-        $lte: Number(profile.age) + limit,
+        $lte: profile.candidateAge + limit,
       },
       candidateAge: { $lte: profile.age },
       gender: profile.interest === 2 ? [0, 1] : profile.interest,
