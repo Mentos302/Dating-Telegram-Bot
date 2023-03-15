@@ -20,10 +20,18 @@ export class UsersUpdate {
     private readonly relationsService: RelationsService,
   ) {}
 
-  @Command('admin')
+  @Command('users')
   @UseGuards(AdminGuard)
-  onAdminCommand(): string {
-    return 'Welcome judge';
+  async onUsers(): Promise<string> {
+    const users = await this.usersService.findAll();
+
+    return `🤩 Ботом користується ${users.length} людей`;
+  }
+
+  @Command('admin_mail')
+  @UseGuards(AdminGuard)
+  async onAdminMailCommand(ctx: Context) {
+    ctx.scene.enter('admin_mail');
   }
 
   @On(['message', 'callback_query'])

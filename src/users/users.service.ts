@@ -9,6 +9,12 @@ export class UsersService {
     @InjectModel(User.name) private usersModel: Model<UserDocument>,
   ) {}
 
+  async findAll(): Promise<User[]> {
+    const users = await this.usersModel.find();
+
+    return users;
+  }
+
   async findByChatId(chat_id: number): Promise<User> {
     const user = await this.usersModel.findOne({ chat_id });
 
