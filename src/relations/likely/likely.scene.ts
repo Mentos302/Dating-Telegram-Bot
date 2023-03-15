@@ -101,12 +101,13 @@ export class LikelyScene {
     } catch (e: any) {
       if (e.response && e.response.error_code === 403) {
         await this.profilesService.delete(chat_id);
+        await this.relationsService.delete(chat_id);
       } else {
         throw new Error(`Unexpected error with like sending`);
       }
     }
 
-    // await this.relationsService.updateLikely(chat_id, ctx.from.id);
+    await this.relationsService.updateLikely(chat_id, ctx.from.id);
   }
 
   @Action('no')

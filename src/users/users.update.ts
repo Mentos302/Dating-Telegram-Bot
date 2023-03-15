@@ -1,32 +1,17 @@
-import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import {
-  Help,
-  InjectBot,
-  On,
-  Message,
-  Start,
-  Update,
-  Command,
-  Ctx,
-  Action,
-} from 'nestjs-telegraf';
+import { UseInterceptors } from '@nestjs/common';
+import { On, Update, Ctx } from 'nestjs-telegraf';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
-import { Telegraf } from 'telegraf';
 import { Context } from '../interfaces/context.interface';
 import { UsersService } from './users.service';
-// import { ReverseTextPipe } from '../common/pipes/reverse-text.pipe';
-// import { ResponseTimeInterceptor } from '../common/interceptors/response-time.interceptor';
-// import { AdminGuard } from '../common/guards/admin.guard';
-// import { TelegrafExceptionFilter } from '../common/filters/telegraf-exception.filter';
+import { ResponseTimeInterceptor } from '../common/interceptors/response-time.interceptor';
+import { SentryInterceptor } from 'src/common/interceptors/sentry-interceptor';
 
 @Update()
-// @UseInterceptors(ResponseTimeInterceptor)
-// @UseFilters(TelegrafExceptionFilter)
+@UseInterceptors(SentryInterceptor)
+@UseInterceptors(ResponseTimeInterceptor)
 export class UsersUpdate {
   constructor(
-    @InjectBot()
-    private readonly bot: Telegraf<Context>,
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly relationsService: RelationsService,

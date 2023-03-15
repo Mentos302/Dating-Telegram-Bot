@@ -52,7 +52,7 @@ export class SwiperMainScene {
               },
             });
 
-        // delete ctx.scene.state['is_first'];
+        delete ctx.scene.state['is_first'];
       } else {
         const media = avatar.file_id;
 
@@ -98,6 +98,7 @@ export class SwiperMainScene {
       } catch (e: any) {
         if (e.response && e.response.error_code === 403) {
           await this.profilesService.delete(chat_id);
+          await this.relationsService.delete(chat_id);
         } else {
           throw new Error(`Unexpected error with like sending`);
         }
@@ -138,7 +139,7 @@ export class SwiperMainScene {
       await this.profilesService.update(chat_id, { strikes });
     }
 
-    // await this.relationsService.create(ctx.from.id, chat_id);
+    await this.relationsService.create(ctx.from.id, chat_id);
 
     ctx.session['candidates'].shift();
 

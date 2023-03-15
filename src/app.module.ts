@@ -15,7 +15,6 @@ import { ProfilesModule } from './profiles/profiles.module';
       middlewares: [session()],
     }),
     UsersModule,
-    ProfilesModule,
   ],
 })
 export class AppModule {}

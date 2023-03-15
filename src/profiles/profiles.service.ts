@@ -63,7 +63,7 @@ export class ProfilesService {
     const candidates = await this.profilesModel.find({
       age: {
         $gte: profile.candidateAge,
-        $lte: profile.age + limit,
+        $lte: Number(profile.age) + limit,
       },
       candidateAge: { $lte: profile.age },
       gender: profile.interest === 2 ? [0, 1] : profile.interest,
