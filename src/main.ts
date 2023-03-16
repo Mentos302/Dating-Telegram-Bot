@@ -9,6 +9,6 @@ async function bootstrap() {
     dsn: process.env.SENTRY_DSN,
   });
 
-  await app.listen(3001);
+  await app.listen(3000);
 }
 bootstrap();
