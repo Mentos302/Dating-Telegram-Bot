@@ -32,7 +32,7 @@ export class ProfilesService {
       { new: true, useFindAndModify: false },
     );
 
-    return profile.likes;
+    return profile ? profile.likes : 0;
   }
 
   async findByChatId(chat_id: number): Promise<Profile> {
