@@ -172,7 +172,7 @@ export class LikelyScene {
     if (ctx.session['likely'].length) {
       ctx.scene.enter('likely', { is_first: true });
     } else {
-      ctx.scene.enter('swiper_main');
+      ctx.scene.enter('swiper_main', { is_first: true });
     }
   }
 
