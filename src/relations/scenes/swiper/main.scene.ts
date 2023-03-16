@@ -24,7 +24,9 @@ export class SwiperMainScene {
     if (candidates.length) {
       const { name, avatar, age, city, description } = candidates[0];
 
-      const caption = `<b>${name}, ${age}</b>. ${city} \n\n${description}`;
+      const caption = `<b>${name}, ${age}</b>. ${city} \n\n${
+        description || ''
+      }`;
 
       const inline_keyboard = [
         [

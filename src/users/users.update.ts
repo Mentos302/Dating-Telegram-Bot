@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { On, Update, Ctx, Command } from 'nestjs-telegraf';
+import { On, Update, Ctx, Command, InjectBot } from 'nestjs-telegraf';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
 import { Context } from '../interfaces/context.interface';
@@ -8,6 +8,7 @@ import { ResponseTimeInterceptor } from '../common/interceptors/response-time.in
 import { SentryInterceptor } from 'src/common/interceptors/sentry-interceptor';
 import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { AdminGuard } from 'src/admin/admin.guard';
+import { Telegraf } from 'telegraf';
 
 @Update()
 @UseInterceptors(SentryInterceptor)
@@ -15,6 +16,8 @@ import { AdminGuard } from 'src/admin/admin.guard';
 @UseFilters(TelegrafExceptionFilter)
 export class UsersUpdate {
   constructor(
+    @InjectBot()
+    private readonly bot: Telegraf<Context>,
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly relationsService: RelationsService,
@@ -44,14 +47,16 @@ export class UsersUpdate {
 
     if (profile) {
       const relations = await this.relationsService.findByChatId(ctx.from.id);
+
       const likely = await this.relationsService.findLikes(ctx.from.id);
 
       ctx.session['likely'] = likely;
       ctx.session['profile'] = profile;
       ctx.session['relations'] = relations;
-      ctx.session['candidates'] = await this.profilesService
-        .findCandidates(profile, relations)
-        .catch((e) => console.log(e));
+      ctx.session['candidates'] = await this.profilesService.findCandidates(
+        profile,
+        relations,
+      );
 
       likely.length
         ? ctx.scene.enter('likely', { is_first: true })

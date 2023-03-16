@@ -18,16 +18,14 @@ export class RegistrationCityScene {
 
     if (!location) return '🧳 Не змогли знайти таке місто, спробуйте ще раз!';
 
-    ctx.session['candidates'] = await this.profilesService
-      .findCandidates(
-        {
-          ...ctx.scene.state,
-          city,
-          location,
-        } as Profile,
-        [],
-      )
-      .catch((e) => console.log(e));
+    ctx.session['candidates'] = await this.profilesService.findCandidates(
+      {
+        ...ctx.scene.state,
+        city,
+        location,
+      } as Profile,
+      [],
+    );
 
     ctx.scene.enter('reg_name', {
       ...ctx.scene.state,

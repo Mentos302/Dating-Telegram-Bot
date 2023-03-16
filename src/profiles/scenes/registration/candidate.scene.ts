@@ -54,7 +54,10 @@ export class RegistrationCandidateScene {
     if (isNaN(parseInt(candidateAge?.trim()))) {
       ctx.replyWithHTML('❌ Вкажи правильний вік, <b>тільки числа!</b>');
     } else {
-      ctx.scene.enter(`reg_city`, { ...ctx.scene.state, candidateAge });
+      ctx.scene.enter(`reg_city`, {
+        ...ctx.scene.state,
+        candidateAge: parseInt(candidateAge),
+      });
     }
   }
 

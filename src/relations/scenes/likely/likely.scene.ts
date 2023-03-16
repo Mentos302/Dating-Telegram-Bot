@@ -23,7 +23,9 @@ export class LikelyScene {
       const candidate = await this.profilesService.findByChatId(candidates[0]);
       const { name, avatar, age, city, description } = candidate;
 
-      const caption = `<b>${name}, ${age}</b>. ${city} \n\n${description}`;
+      const caption = `<b>${name}, ${age}</b>. ${city} \n\n${
+        description || ''
+      }`;
 
       const inline_keyboard = [
         [
