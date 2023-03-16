@@ -102,7 +102,7 @@ export class LikelyScene {
           parse_mode: 'HTML',
           reply_markup: {
             inline_keyboard: [
-              [Markup.button.callback('📝 Мій профіль', 'rndmsht')],
+              [Markup.button.callback('Переглянути лайки ❤️', 'rndmsht')],
             ],
           },
         },

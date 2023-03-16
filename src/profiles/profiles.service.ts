@@ -66,7 +66,7 @@ export class ProfilesService {
       },
       candidateAge: { $lte: profile.age },
       gender: profile.interest === 2 ? [0, 1] : profile.interest,
-      interest: [2, profile.gender],
+      interest: { $in: [2, profile.gender] },
       chat_id: { $nin: [...relations] },
       is_active: true,
       location: {

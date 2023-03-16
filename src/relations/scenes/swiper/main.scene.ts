@@ -91,7 +91,7 @@ export class SwiperMainScene {
       try {
         await this.bot.telegram.sendMessage(
           chat_id,
-          `😍 Твій профіль сподобався <b>${likes} людям</b>\n\n<i>Показати кому?</i>}`,
+          `😍 Твій профіль сподобався <b>${likes} людям</b>\n\n<i>Показати кому?</i>`,
           {
             parse_mode: 'HTML',
             reply_markup: {
