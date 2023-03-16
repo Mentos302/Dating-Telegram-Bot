@@ -1,9 +1,12 @@
-import { Scene, SceneEnter, On, Ctx, Message, Command } from 'nestjs-telegraf';
-import { Context } from 'src/interfaces/context.interface';
 import { Markup } from 'telegraf';
+import { UseFilters } from '@nestjs/common';
+import { Scene, SceneEnter, Command } from 'nestjs-telegraf';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
+import { Context } from 'src/interfaces/context.interface';
 import { AdminService } from '../admin.service';
 
 @Scene('admin_mail')
+@UseFilters(TelegrafExceptionFilter)
 export class AdminMailingScene {
   constructor(private readonly adminService: AdminService) {}
 

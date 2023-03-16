@@ -1,3 +1,4 @@
+import { Telegraf } from 'telegraf';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { On, Update, Ctx, Command, InjectBot } from 'nestjs-telegraf';
 import { ProfilesService } from 'src/profiles/profiles.service';
@@ -8,7 +9,6 @@ import { ResponseTimeInterceptor } from '../common/interceptors/response-time.in
 import { SentryInterceptor } from 'src/common/interceptors/sentry-interceptor';
 import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { AdminGuard } from 'src/admin/admin.guard';
-import { Telegraf } from 'telegraf';
 
 @Update()
 @UseInterceptors(SentryInterceptor)
@@ -16,8 +16,6 @@ import { Telegraf } from 'telegraf';
 @UseFilters(TelegrafExceptionFilter)
 export class UsersUpdate {
   constructor(
-    @InjectBot()
-    private readonly bot: Telegraf<Context>,
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly relationsService: RelationsService,

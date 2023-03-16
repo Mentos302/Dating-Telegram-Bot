@@ -1,7 +1,10 @@
+import { UseFilters } from '@nestjs/common';
 import { Scene, SceneEnter, On, Message, Ctx } from 'nestjs-telegraf';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 
 @Scene('reg_age')
+@UseFilters(TelegrafExceptionFilter)
 export class RegistrationAgeScene {
   @SceneEnter()
   onSceneEnter(ctx: Context) {

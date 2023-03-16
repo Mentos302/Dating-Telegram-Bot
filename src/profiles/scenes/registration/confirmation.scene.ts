@@ -1,11 +1,14 @@
-import { Scene, SceneEnter, Action, On, InjectBot } from 'nestjs-telegraf';
+import { Markup } from 'telegraf';
+import { UseFilters } from '@nestjs/common';
+import { Scene, SceneEnter, Action, On } from 'nestjs-telegraf';
 import { AdminService } from 'src/admin/admin.service';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { Profile } from 'src/profiles/schemas/profiles.schema';
-import { Markup, Telegraf } from 'telegraf';
 
 @Scene('reg_confirmation')
+@UseFilters(TelegrafExceptionFilter)
 export class RegistrationConfirmationScene {
   constructor(
     private readonly profilesService: ProfilesService,

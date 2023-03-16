@@ -1,10 +1,13 @@
+import { Markup } from 'telegraf';
+import { UseFilters } from '@nestjs/common';
 import { Scene, SceneEnter, On, Action } from 'nestjs-telegraf';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
-import { Markup } from 'telegraf';
 
 @Scene('swiper_menu')
+@UseFilters(TelegrafExceptionFilter)
 export class SwiperMenuScene {
   constructor(
     private readonly profilesService: ProfilesService,

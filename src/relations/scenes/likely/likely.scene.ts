@@ -1,11 +1,14 @@
+import { Markup, Telegraf } from 'telegraf';
+import { UseFilters } from '@nestjs/common';
 import { Scene, SceneEnter, On, Action, InjectBot } from 'nestjs-telegraf';
 import { AdminService } from 'src/admin/admin.service';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
-import { Markup, Telegraf } from 'telegraf';
 
 @Scene('likely')
+@UseFilters(TelegrafExceptionFilter)
 export class LikelyScene {
   constructor(
     @InjectBot()

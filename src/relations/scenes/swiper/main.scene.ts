@@ -1,13 +1,15 @@
+import { Markup, Telegraf } from 'telegraf';
+import { UseFilters } from '@nestjs/common';
 import { Scene, SceneEnter, On, Action, InjectBot } from 'nestjs-telegraf';
 import { AdminService } from 'src/admin/admin.service';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { Profile } from 'src/profiles/schemas/profiles.schema';
 import { RelationsService } from 'src/relations/relations.service';
-import { Markup, Telegraf } from 'telegraf';
-import { inlineKeyboard, keyboard } from 'telegraf/typings/markup';
 
 @Scene('swiper_main')
+@UseFilters(TelegrafExceptionFilter)
 export class SwiperMainScene {
   constructor(
     @InjectBot()

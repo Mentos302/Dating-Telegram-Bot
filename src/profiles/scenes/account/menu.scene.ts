@@ -1,10 +1,12 @@
-import { Scene, SceneEnter, On, Message, Ctx, Action } from 'nestjs-telegraf';
+import { UseFilters } from '@nestjs/common';
+import { Scene, SceneEnter, On, Action } from 'nestjs-telegraf';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { Markup } from 'telegraf';
-import { keyboard } from 'telegraf/typings/markup';
 
 @Scene('account_menu')
+@UseFilters(TelegrafExceptionFilter)
 export class AccountMenuScene {
   constructor(private readonly profilesService: ProfilesService) {}
 

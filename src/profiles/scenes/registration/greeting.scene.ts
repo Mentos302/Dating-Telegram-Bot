@@ -1,11 +1,14 @@
-import { Scene, SceneEnter, Action, On } from 'nestjs-telegraf';
-import { Context } from 'src/interfaces/context.interface';
 import { Markup } from 'telegraf';
+import { UseFilters } from '@nestjs/common';
+import { Scene, SceneEnter, Action, On } from 'nestjs-telegraf';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
+import { Context } from 'src/interfaces/context.interface';
 
 @Scene('reg_greeting')
+@UseFilters(TelegrafExceptionFilter)
 export class RegistrationGreetingScene {
   @SceneEnter()
-  onSceneEnter(ctx: Context) {
+  async onSceneEnter(ctx: Context) {
     ctx.replyWithHTML(
       `👋 Привіт, <b>${ctx.from.first_name}</b>. \n\nЯ можу допомогти тобі знайти <b>❤️ пару</b> або просто <b>🎉 друзів</b>. \nДля цього потрібно відповісти на <b>декілька запитань, окей?</b>`,
       Markup.inlineKeyboard([[{ text: 'Так 👍', callback_data: 'okay' }]]),

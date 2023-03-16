@@ -1,7 +1,10 @@
-import { Scene, SceneEnter, Action, On, Ctx, Message } from 'nestjs-telegraf';
+import { UseFilters } from '@nestjs/common';
+import { Scene, SceneEnter, On, Ctx, Message } from 'nestjs-telegraf';
+import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 
 @Scene('reg_avatar')
+@UseFilters(TelegrafExceptionFilter)
 export class RegistrationAvatarScene {
   @SceneEnter()
   onSceneEnter(ctx: Context) {
