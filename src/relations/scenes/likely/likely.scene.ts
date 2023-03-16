@@ -77,7 +77,7 @@ export class LikelyScene {
         });
       }
     } else {
-      ctx.scene.enter('swiper_main', { is_first: true });
+      ctx.scene.enter('swiper_main');
     }
   }
 
