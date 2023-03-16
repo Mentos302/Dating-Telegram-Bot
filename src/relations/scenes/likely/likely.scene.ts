@@ -24,6 +24,9 @@ export class LikelyScene {
 
     if (candidates.length) {
       const candidate = await this.profilesService.findByChatId(candidates[0]);
+
+      if (!candidate) ctx.scene.enter('swiper_main', { is_first: true });
+
       const { name, avatar, age, city, description } = candidate;
 
       const caption = `<b>${name}, ${age}</b>. ${city} \n\n${
