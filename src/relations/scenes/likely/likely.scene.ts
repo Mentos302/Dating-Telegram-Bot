@@ -21,11 +21,12 @@ export class LikelyScene {
   @SceneEnter()
   async onSceneEnter(ctx: Context) {
     const candidates: number[] = ctx.session['likely'];
+    await this.profilesService.update(ctx.from.id, { likes: 0 });
 
     if (candidates.length) {
       const candidate = await this.profilesService.findByChatId(candidates[0]);
 
-      if (!candidate) ctx.scene.enter('swiper_main', { is_first: true });
+      if (!candidate) return ctx.scene.enter('swiper_main', { is_first: true });
 
       const { name, avatar, age, city, description } = candidate;
 

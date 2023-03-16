@@ -78,23 +78,48 @@ export class AdminService {
     let blocked = 0;
     const users = await this.usersModel.find();
 
-    await Promise.all(
-      users.map(async (user) => {
-        setTimeout(async () => {
+    const resultUsers = [[]];
+    let activeUsersIndex = 0;
+
+    users.forEach((userId) => {
+      const last = resultUsers[resultUsers.length - 1];
+      if (last.length < 30) last.push(userId);
+      else resultUsers.push([userId]);
+    });
+
+    async function step(ctx) {
+      const startedAt = Date.now();
+      const usrs = resultUsers[activeUsersIndex++];
+      let arg;
+
+      if (!usrs || usrs.length <= 0) {
+        return true;
+      }
+
+      await Promise.all(
+        usrs.map(async ({ chat_id }) => {
           try {
-            await this.bot.telegram.sendMessage(user.chat_id, message, extra);
-          } catch (e: any) {
+            arg = await ctx.bot.telegram.sendMessage(chat_id, message, extra);
+          } catch (e) {
             if (e.code === 403) {
-              await this.usersModel.deleteOne({ chat_id: user.chat_id });
+              await ctx.usersModel.deleteOne({ chat_id });
 
               blocked++;
             } else {
               console.log(e);
             }
           }
-        }, 50);
-      }),
-    );
+        }),
+      );
+
+      return new Promise((resolve) => {
+        setTimeout(async () => {
+          resolve(await step(ctx));
+        }, Math.max(0, startedAt + 1000 - Date.now()));
+      });
+    }
+
+    await step(this);
 
     await this.bot.telegram.sendMessage(
       process.env.ADMIN_ID,

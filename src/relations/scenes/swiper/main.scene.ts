@@ -87,7 +87,7 @@ export class SwiperMainScene {
     const { chat_id }: Profile = ctx.session['candidates'][0];
     const likes = await this.profilesService.addNewLike(chat_id);
 
-    if (likes && likes % 3 === 0) {
+    if (likes && likes <= 10 && likes % 5 === 0) {
       try {
         await this.bot.telegram.sendMessage(
           chat_id,

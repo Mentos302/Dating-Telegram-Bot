@@ -48,7 +48,7 @@ export class ProfilesService {
       data: { latitude; longitude }[];
     };
 
-    if (response.data && !response.data[0]) return;
+    if (!response?.data[0]?.latitude) return;
 
     return {
       type: 'Point',
