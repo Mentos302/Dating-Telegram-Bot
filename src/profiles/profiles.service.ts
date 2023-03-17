@@ -45,8 +45,11 @@ export class ProfilesService {
     let geoCodeUrl = `http://api.positionstack.com/v1/forward?access_key=${process.env.GEOCODE_API_KEY}&query=${city}`;
 
     let response = (await (await fetch(encodeURI(geoCodeUrl))).json()) as {
-      data: { latitude; longitude }[];
+      error?;
+      data?: { latitude; longitude }[];
     };
+
+    if (response.error) return;
 
     if (!response?.data[0]?.latitude) return;
 
