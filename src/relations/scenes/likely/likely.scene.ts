@@ -6,8 +6,9 @@ import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.f
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
+import { SCENE_SETTINGS } from 'src/common/config/scene';
 
-@Scene('likely')
+@Scene('likely', SCENE_SETTINGS)
 @UseFilters(TelegrafExceptionFilter)
 export class LikelyScene {
   constructor(
@@ -45,7 +46,7 @@ export class LikelyScene {
         ],
       ];
 
-      if (ctx.scene.state['is_first']) {
+      const sendNewMessage = () => {
         avatar.is_video
           ? ctx.replyWithVideo(`${avatar.file_id}`, {
               caption,
@@ -63,19 +64,29 @@ export class LikelyScene {
             });
 
         delete ctx.scene.state['is_first'];
+      };
+
+      if (ctx.scene.state['is_first']) {
+        sendNewMessage();
       } else {
-        const media = avatar.file_id;
+        try {
+          const media = avatar.file_id;
 
-        await ctx.editMessageMedia(
-          avatar.is_video ? { type: 'video', media } : { type: 'photo', media },
-        );
+          await ctx.editMessageMedia(
+            avatar.is_video
+              ? { type: 'video', media }
+              : { type: 'photo', media },
+          );
 
-        ctx.editMessageCaption(caption, {
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard,
-          },
-        });
+          ctx.editMessageCaption(caption, {
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard,
+            },
+          });
+        } catch (err) {
+          sendNewMessage();
+        }
       }
     } else {
       ctx.scene.enter('swiper_main');
@@ -84,40 +95,51 @@ export class LikelyScene {
 
   @Action('yes')
   async onYes(ctx: Context) {
-    const { name, chat_id } = await this.profilesService.findByChatId(
+    const profile = await this.profilesService.findByChatId(
       ctx.session['likely'][0],
     );
 
-    ctx.replyWithHTML(
-      `<b>❤️ Чудово!</b> У вас взаємна симпатія.\n\n<i>Не соромся написати першим(ою)</i> 👉 <a href="tg://user?id=${chat_id}">${name}</a>`,
-      Markup.inlineKeyboard([
-        { text: 'Продовжити пошуки ☺️🔎', callback_data: 'continue' },
-      ]),
-    );
+    if (profile) {
+      const { name, chat_id } = profile;
 
-    try {
-      await this.bot.telegram.sendMessage(
-        chat_id,
-        `❤️ <b>Є взаємна симпатія!</b>\n\n<i>Не соромся написати першим(ою)</i> 👉 <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>`,
-        {
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard: [
-              [Markup.button.callback('Переглянути лайки ❤️', 'rndmsht')],
-            ],
-          },
-        },
+      ctx.replyWithHTML(
+        `<b>❤️ Чудово!</b> У вас взаємна симпатія.\n\n<i>Не соромся написати першим(ою)</i> 👉 <a href="tg://user?id=${chat_id}">${name}</a>`,
+        Markup.inlineKeyboard([
+          { text: 'Продовжити пошуки ☺️🔎', callback_data: 'continue' },
+        ]),
       );
-    } catch (e: any) {
-      if (e.response && e.response.error_code === 403) {
-        await this.profilesService.delete(chat_id);
-        await this.relationsService.delete(chat_id);
-      } else {
-        throw new Error(`Unexpected error with like sending`);
-      }
-    }
 
-    await this.relationsService.updateLikely(chat_id, ctx.from.id);
+      try {
+        await this.bot.telegram.sendMessage(
+          chat_id,
+          `❤️ <b>Є взаємна симпатія!</b>\n\n<i>Не соромся написати першим(ою)</i> 👉 <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name}</a>`,
+          {
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [Markup.button.callback('Переглянути лайки ❤️', 'rndmsht')],
+              ],
+            },
+          },
+        );
+      } catch (e: any) {
+        if (e.response && e.response.error_code === 403) {
+          await this.profilesService.delete(chat_id);
+          await this.relationsService.delete(chat_id);
+        } else {
+          throw new Error(`Unexpected error with like sending`);
+        }
+      }
+
+      await this.relationsService.updateLikely(chat_id, ctx.from.id);
+    } else {
+      ctx.replyWithHTML(
+        `<b>❤️ Чудово!</b> У вас взаємна симпатія.\n\n`,
+        Markup.inlineKeyboard([
+          { text: 'Продовжити пошуки ☺️🔎', callback_data: 'continue' },
+        ]),
+      );
+    }
   }
 
   @Action('no')

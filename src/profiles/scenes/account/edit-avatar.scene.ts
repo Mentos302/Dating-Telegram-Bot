@@ -1,11 +1,12 @@
 import { UseFilters } from '@nestjs/common';
 import { Scene, SceneEnter, On, Ctx, Message } from 'nestjs-telegraf';
+import { SCENE_SETTINGS } from 'src/common/config/scene';
 import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
 
-@Scene('edit_avatar')
+@Scene('edit_avatar', SCENE_SETTINGS)
 @UseFilters(TelegrafExceptionFilter)
 export class AccountAvatarScene {
   constructor(

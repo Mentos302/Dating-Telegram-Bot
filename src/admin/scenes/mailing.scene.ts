@@ -4,8 +4,9 @@ import { Scene, SceneEnter, Command } from 'nestjs-telegraf';
 import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
 import { AdminService } from '../admin.service';
+import { SCENE_SETTINGS } from 'src/common/config/scene';
 
-@Scene('admin_mail')
+@Scene('admin_mail', SCENE_SETTINGS)
 @UseFilters(TelegrafExceptionFilter)
 export class AdminMailingScene {
   constructor(private readonly adminService: AdminService) {}

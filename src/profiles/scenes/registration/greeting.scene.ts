@@ -3,8 +3,9 @@ import { UseFilters } from '@nestjs/common';
 import { Scene, SceneEnter, Action, On } from 'nestjs-telegraf';
 import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.filter';
 import { Context } from 'src/interfaces/context.interface';
+import { SCENE_SETTINGS } from 'src/common/config/scene';
 
-@Scene('reg_greeting')
+@Scene('reg_greeting', SCENE_SETTINGS)
 @UseFilters(TelegrafExceptionFilter)
 export class RegistrationGreetingScene {
   @SceneEnter()

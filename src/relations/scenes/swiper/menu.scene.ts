@@ -5,8 +5,9 @@ import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.f
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { RelationsService } from 'src/relations/relations.service';
+import { SCENE_SETTINGS } from 'src/common/config/scene';
 
-@Scene('swiper_menu')
+@Scene('swiper_menu', SCENE_SETTINGS)
 @UseFilters(TelegrafExceptionFilter)
 export class SwiperMenuScene {
   constructor(

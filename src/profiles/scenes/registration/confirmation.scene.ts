@@ -6,8 +6,9 @@ import { TelegrafExceptionFilter } from 'src/common/filters/telegraf-exception.f
 import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { Profile } from 'src/profiles/schemas/profiles.schema';
+import { SCENE_SETTINGS } from 'src/common/config/scene';
 
-@Scene('reg_confirmation')
+@Scene('reg_confirmation', SCENE_SETTINGS)
 @UseFilters(TelegrafExceptionFilter)
 export class RegistrationConfirmationScene {
   constructor(

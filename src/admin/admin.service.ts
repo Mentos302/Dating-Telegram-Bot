@@ -17,6 +17,8 @@ export class AdminService {
   async newUserNotification(profile: Profile) {
     const { name, age, city, description, avatar } = profile;
 
+    if (!avatar) return;
+
     await this.bot.telegram.sendMessage(
       process.env.ADMIN_ID,
       `<b>🚨 Новий профіль в сервісі: </b>`,

@@ -7,8 +7,9 @@ import { Context } from 'src/interfaces/context.interface';
 import { ProfilesService } from 'src/profiles/profiles.service';
 import { Profile } from 'src/profiles/schemas/profiles.schema';
 import { RelationsService } from 'src/relations/relations.service';
+import { SCENE_SETTINGS } from 'src/common/config/scene';
 
-@Scene('swiper_main')
+@Scene('swiper_main', SCENE_SETTINGS)
 @UseFilters(TelegrafExceptionFilter)
 export class SwiperMainScene {
   constructor(
